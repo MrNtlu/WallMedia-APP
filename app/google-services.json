@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "1083937674308",
+    "firebase_url": "https://socialmedia-app-eb125.firebaseio.com",
+    "project_id": "socialmedia-app-eb125",
+    "storage_bucket": "socialmedia-app-eb125.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1083937674308:android:8c129bb869297d3d",
+        "android_client_info": {
+          "package_name": "com.mrntlu.socialmediaapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1083937674308-j6cc00ok7ik0ag5fjt9tgqlcmvi13i87.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAtgWC_7jlmlFHDI3jCdTsKbWn33mmGVnU"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
