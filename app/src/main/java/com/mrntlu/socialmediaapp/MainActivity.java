@@ -1,7 +1,10 @@
 package com.mrntlu.socialmediaapp;
 
+import android.Manifest;
+import android.app.Activity;
 import android.content.Intent;
 import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -16,6 +19,8 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+
+import es.dmoral.toasty.Toasty;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -43,6 +48,8 @@ public class MainActivity extends AppCompatActivity {
         Button registerButton=(Button)findViewById(R.id.registerButton);
         loginProgress=(ProgressBar)findViewById(R.id.loginProgress);
 
+        ActivityCompat.requestPermissions(MainActivity.this,new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},1);
+
         firebaseAuth=FirebaseAuth.getInstance();
 
         emailText=(EditText)findViewById(R.id.mailText);
@@ -66,7 +73,7 @@ public class MainActivity extends AppCompatActivity {
         String email=emailText.getText().toString().replaceAll("\\s+","");
         String password=passwordText.getText().toString();
         if (email.equals("") || password.equals("")){
-            Toast.makeText(this, "Email ve Password Boş Bırakılamaz.", Toast.LENGTH_SHORT).show();
+            Toasty.error(this, "Email ve Password Boş Bırakılamaz.", Toast.LENGTH_SHORT).show();
         }
         else{
             loginProgress.setVisibility(View.VISIBLE);

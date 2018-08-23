@@ -5,6 +5,9 @@
     android:id="@+id/customMessage_layout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:layout_marginBottom="8dp"
+    android:layout_marginStart="4dp"
+    android:layout_marginEnd="4dp"
     android:background="@color/teal400">
 
     <TextView
@@ -76,7 +79,7 @@
     <ImageView
         android:id="@+id/uploadedImage"
         android:layout_width="0dp"
-        android:layout_height="400dp"
+        android:layout_height="200dp"
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"

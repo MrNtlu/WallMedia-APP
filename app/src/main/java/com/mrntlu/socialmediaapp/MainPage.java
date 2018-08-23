@@ -6,6 +6,9 @@ import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.webkit.MimeTypeMap;
 import android.widget.Button;
@@ -32,6 +35,8 @@ import com.google.firebase.storage.UploadTask;
 import java.util.Calendar;
 import java.util.Date;
 
+import es.dmoral.toasty.Toasty;
+
 public class MainPage extends AppCompatActivity {
 
     private static final int PICK_IMAGE_REQUEST = 1;
@@ -44,7 +49,7 @@ public class MainPage extends AppCompatActivity {
     String miUrlOk;
     StorageTask uploadTask;
 
-    ListView listView;
+    RecyclerView listView;
     EditText editText;
     Button sendButton;
     ImageButton backButton, uploadImage;
@@ -55,7 +60,7 @@ public class MainPage extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_page);
-        listView = (ListView) findViewById(R.id.listView);
+        listView = (RecyclerView) findViewById(R.id.listView);
         editText = (EditText) findViewById(R.id.editText);
         sendButton = (Button) findViewById(R.id.sendButton);
         backButton = (ImageButton) findViewById(R.id.backButton);
@@ -127,14 +132,14 @@ public class MainPage extends AppCompatActivity {
                     }).addOnFailureListener(new OnFailureListener() {
                         @Override
                         public void onFailure(@NonNull Exception e) {
-                            Toast.makeText(MainPage.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                            Toasty.error(MainPage.this, e.getMessage(), Toast.LENGTH_SHORT).show();
                             imageUri = Uri.parse("");
                             uploadImage.setImageDrawable(getResources().getDrawable(android.R.drawable.ic_menu_upload));
                             progressBar.setVisibility(View.GONE);
                         }
                     });
                 } else {
-                    Toast.makeText(MainPage.this, "No file selected", Toast.LENGTH_SHORT).show();
+                    Toasty.error(MainPage.this, "No file selected", Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -150,7 +155,7 @@ public class MainPage extends AppCompatActivity {
         listView.post(new Runnable() {
             @Override
             public void run() {
-                listView.setSelection(messageAdapter.getCount() - 1);
+                listView.getLayoutManager().scrollToPosition(messageAdapter.getItemCount() - 1);
             }
         });
     }
@@ -177,6 +182,8 @@ public class MainPage extends AppCompatActivity {
         super.onStart();
         listviewLoadProgress.setVisibility(View.VISIBLE);
         messageAdapter = new MessageAdapter(this, databaseReference, userid,listviewLoadProgress);
+        GridLayoutManager gridLayoutManager=new GridLayoutManager(this,2);
+        listView.setLayoutManager(gridLayoutManager);
         listView.setAdapter(messageAdapter);
     }
 

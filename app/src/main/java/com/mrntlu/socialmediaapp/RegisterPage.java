@@ -30,6 +30,8 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.StorageTask;
 import com.google.firebase.storage.UploadTask;
 
+import es.dmoral.toasty.Toasty;
+
 public class RegisterPage extends AppCompatActivity {
 
     EditText emailText, passwordText, confirmPassText, nickNameText;
@@ -172,13 +174,13 @@ public class RegisterPage extends AppCompatActivity {
                     task.addOnFailureListener(new OnFailureListener() {
                         @Override
                         public void onFailure(@NonNull Exception e) {
-                            Toast.makeText(RegisterPage.this, "Failed! "+e.getMessage(), Toast.LENGTH_SHORT).show();
+                            Toasty.error(RegisterPage.this, "Failed! "+e.getMessage(), Toast.LENGTH_SHORT).show();
                             e.printStackTrace();
                         }
                     });
                 }
                 if (task.isSuccessful()) {
-                    Toast.makeText(RegisterPage.this, "Success", Toast.LENGTH_SHORT).show();
+                    Toasty.success(RegisterPage.this, "Success", Toast.LENGTH_SHORT).show();
                     startActivity(new Intent(RegisterPage.this, MainActivity.class));
                 }
             }

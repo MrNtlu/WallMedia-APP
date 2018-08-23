@@ -3,11 +3,17 @@ package com.mrntlu.socialmediaapp;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
+import android.support.v7.widget.CardView;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -27,15 +33,21 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 
-public class MessageAdapter extends BaseAdapter {
+import es.dmoral.toasty.Toasty;
+
+public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHolder> {
 
     private Activity activity;
     private DatabaseReference databaseReference;
     private DatabaseReference profilePicDatabase;
     private String displayName;
     private ArrayList<DataSnapshot> dataSnapshots;
+    PublicMessage message;
 
     Dialog customDialog;
     ProgressBar progressBar;
@@ -79,65 +91,36 @@ public class MessageAdapter extends BaseAdapter {
 
         dataSnapshots=new ArrayList<>();
     }
+    //
 
-    static class ViewHolder{
-        TextView authorName;
-        TextView messageText;
-        TextView dateText;
-        ConstraintLayout constraintLayout;
-        ImageView uploadedImage;
-        ImageView profileLogo;
+    @NonNull
+    @Override
+    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        View v= LayoutInflater.from(activity).inflate(R.layout.cardview_images,parent,false);
+        ViewHolder viewHolder=new ViewHolder(v);
+        return viewHolder;
     }
 
     @Override
-    public int getCount() {
-        return dataSnapshots.size();
-    }
-
-    @Override
-    public PublicMessage getItem(int i) {
-        DataSnapshot snapshot=dataSnapshots.get(i);
-        return snapshot.getValue(PublicMessage.class);
-    }
-
-    @Override
-    public long getItemId(int i) {
-        return 0;
-    }
-
-    @Override
-    public View getView(int i, View view, ViewGroup viewGroup) {
-        if (view==null){
-            LayoutInflater inflater=(LayoutInflater)activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            view=inflater.inflate(R.layout.custom_message,viewGroup,false);
-            final ViewHolder holder=new ViewHolder();
-            holder.authorName=(TextView)view.findViewById(R.id.authorText);
-            holder.messageText=(TextView)view.findViewById(R.id.messageText);
-            holder.dateText=(TextView)view.findViewById(R.id.dateText);
-            holder.constraintLayout=(ConstraintLayout)view.findViewById(R.id.customMessage_layout);
-            holder.uploadedImage=(ImageView)view.findViewById(R.id.uploadedImage);
-            holder.profileLogo=(ImageView)view.findViewById(R.id.profileLogo);
-
-            view.setTag(holder);
-        }
-        final PublicMessage message=getItem(i);
-        final ViewHolder holder=(ViewHolder)view.getTag();
+    public void onBindViewHolder(@NonNull final ViewHolder holder, final int position) {
+        DataSnapshot snapshot=dataSnapshots.get(position);
+        message=snapshot.getValue(PublicMessage.class);
 
         String author=message.getAuthor();
         holder.authorName.setText(author);
 
-        String msg=message.getMessage();
-        holder.messageText.setText(msg);
+//        String msg=message.getMessage();
+//        holder.messageText.setText(msg);
 
-        String date=message.getDate().toString();
-        holder.dateText.setText(date);
+//        String date=message.getDate().toString();
+//        holder.dateText.setText(date);
 
         RequestOptions requestOptions=new RequestOptions();
         //requestOptions.placeholder(R.drawable.loading_process);
         requestOptions.error(R.drawable.ic_sync_problem_black_24dp);
 
         Uri uri=Uri.parse(message.getImageUrl());
-        Glide.with(view.getContext()).setDefaultRequestOptions(requestOptions).load(uri).into(holder.uploadedImage);
+        Glide.with(activity).setDefaultRequestOptions(requestOptions).load(uri).into(holder.uploadedImage);
         progressBar.setVisibility(View.GONE);
 
         final DatabaseReference authorDatabase=profilePicDatabase.child(author);
@@ -153,18 +136,60 @@ public class MessageAdapter extends BaseAdapter {
             }
         });
 
-        holder.uploadedImage.setOnClickListener(new View.OnClickListener() {
+        holder.cardviewLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 customDialog=new Dialog(view.getContext(),android.R.style.Theme_Black_NoTitleBar);
-                showPopup(view,message.getImageUrl());
+                showPopup(view,dataSnapshots.get(position).getValue(PublicMessage.class).getImageUrl(),holder.uploadedImage.getId());
             }
         });
-
-        return view;
     }
 
-    void showPopup(View v,String imageURL){
+    @Override
+    public int getItemCount() {
+        return dataSnapshots.size();
+    }
+
+    //
+
+    @Override
+    public long getItemId(int i) {
+        return 0;
+    }
+
+    void saveImage(Drawable drawable,String imageName){
+        Toasty.info(activity, "Started to Save", Toast.LENGTH_SHORT).show();
+
+        Log.d("test", "saveImage: "+drawable+" "+imageName);
+//        Bitmap image= BitmapFactory.decodeResource(activity.getResources(),drawable);
+
+        BitmapDrawable drawable1=(BitmapDrawable)drawable;
+        Bitmap image=((BitmapDrawable) drawable).getBitmap();
+
+        File path= Environment.getExternalStorageDirectory();
+
+        Log.d("test", "saveImage: "+path);
+
+        File dir=new File(path+"/Download/");
+        dir.mkdir();
+
+        File file=new File(dir,imageName);
+        OutputStream out=null;
+
+        try {
+            out=new FileOutputStream(file);
+            image.compress(Bitmap.CompressFormat.PNG,100,out);
+            out.flush();
+            out.close();
+            Toasty.success(activity, "Saved", Toast.LENGTH_SHORT).show();
+        }
+        catch (Exception e){
+            e.printStackTrace();
+            Toasty.error(activity, "Error! " + e.getMessage(), Toast.LENGTH_LONG).show();
+        }
+    }
+
+    void showPopup(View v, String imageURL, final int drawable){
         ImageButton backButton,downloadButton,shareButton;
         ImageView uploadedImage;
         customDialog.setContentView(R.layout.image_dialog);
@@ -172,18 +197,18 @@ public class MessageAdapter extends BaseAdapter {
         uploadedImage=(ImageView)customDialog.findViewById(R.id.uploadedImage);
         downloadButton=(ImageButton)customDialog.findViewById(R.id.downloadButton);
         shareButton=(ImageButton)customDialog.findViewById(R.id.shareButton);
-
+        final ImageView finalUploaded=uploadedImage;
         downloadButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(activity, "Download Button Clicked", Toast.LENGTH_SHORT).show();
+                saveImage(finalUploaded.getDrawable(),"Wallpaper.png");
             }
         });
 
         shareButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(activity, "Share Button Clicked", Toast.LENGTH_SHORT).show();
+                Toasty.info(activity, "Share Button Clicked", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -198,9 +223,28 @@ public class MessageAdapter extends BaseAdapter {
         customDialog.show();
     }
 
-
-
     public void cleanup(){
         databaseReference.removeEventListener(listener);
+    }
+
+    public static class ViewHolder extends RecyclerView.ViewHolder{
+        TextView authorName;
+//        TextView messageText;
+//        TextView dateText;
+        ConstraintLayout constraintLayout;
+        ImageView uploadedImage;
+        ImageView profileLogo;
+        CardView cardviewLayout;
+
+        public ViewHolder(View itemView) {
+            super(itemView);
+            authorName=(TextView)itemView.findViewById(R.id.authorText);
+//            messageText=(TextView)itemView.findViewById(R.id.messageText);
+//            dateText=(TextView)itemView.findViewById(R.id.dateText);
+            constraintLayout=(ConstraintLayout)itemView.findViewById(R.id.customMessage_layout);
+            uploadedImage=(ImageView)itemView.findViewById(R.id.uploadedImage);
+            profileLogo=(ImageView)itemView.findViewById(R.id.profileLogo);
+            cardviewLayout=(CardView)itemView.findViewById(R.id.cardview_layout);
+        }
     }
 }
