@@ -44,7 +44,6 @@ public class RegisterPage extends AppCompatActivity {
     private DatabaseReference databaseReference;
     private Uri imageUri;
     private StorageReference storageReference;
-    String miUrlOk;
     StorageTask uploadTask;
 
     @Override
@@ -93,7 +92,7 @@ public class RegisterPage extends AppCompatActivity {
         registerButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (emailCheck() && passwordConfirm()) {
+                if (emailCheck() && passwordConfirm() && profileImageCheck()) {
                     createFirebaseUser();
                     final StorageReference fileReference = storageReference.child(System.currentTimeMillis()
                             + "." + getFileExtension(imageUri));
@@ -159,6 +158,8 @@ public class RegisterPage extends AppCompatActivity {
     private boolean emailCheck() {
         return emailText.getText().toString().contains("@");
     }
+
+    private boolean profileImageCheck(){return imageUri!=null;}
 
     private boolean passwordConfirm() {
         return passwordText.getText().length() > 5 && passwordText.getText().toString().equals(confirmPassText.getText().toString());

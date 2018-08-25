@@ -28,18 +28,6 @@ public class MainActivity extends AppCompatActivity {
     private EditText emailText,passwordText;
     private ProgressBar loginProgress;
 
-    /*
-    TODO https://www.udemy.com/android-app-development-with-java/learn/v4/t/lecture/7102972?start=0
-    TODO https://firebase.google.com/docs/auth/android/password-auth
-    TODO https://firebase.google.com/docs/database/android/start/
-    TODO https://console.firebase.google.com/u/0/project/socialmedia-app-eb125/authentication/users
-    TODO https://stackoverflow.com/questions/49589791/get-user-email-from-uid-without-login-to-app-firebase
-    TODO https://stackoverflow.com/questions/38114358/firebase-setdisplayname-of-user-while-creating-user-android
-    TODO https://firebase.google.com/docs/database/android/read-and-write#read_and_write_data
-    TODO https://stackoverflow.com/questions/39536517/write-new-data-in-android-firebase-database
-    TODO https://stackoverflow.com/questions/45162528/how-to-set-value-to-all-childs-data-in-firebase-database
-    */
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

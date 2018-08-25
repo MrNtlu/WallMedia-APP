@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v7.widget.CardView
+<android.support.v7.widget.CardView xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/cardview_layout"
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:clickable="true"
@@ -8,7 +8,7 @@
     android:layout_height="300dp"
     android:layout_marginStart="4dp"
     android:layout_marginEnd="4dp"
-    android:layout_marginBottom="8dp"
+    android:layout_marginBottom="4dp"
     android:layout_marginTop="8dp"
     android:layout_centerVertical="true"
     android:layout_centerHorizontal="true"
@@ -19,11 +19,26 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <ImageView
-            android:id="@+id/uploadedImage"
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="231dp"
-            android:scaleType="centerCrop" />
+            android:layout_height="231dp">
+
+            <ImageView
+                android:id="@+id/uploadedImage"
+                android:layout_width="match_parent"
+                android:layout_height="231dp"
+                android:scaleType="centerCrop" />
+
+            <ProgressBar
+                android:id="@+id/uploadedImageProgressBar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:visibility="gone" />
+
+        </RelativeLayout>
+
+
         <View
             android:id="@+id/view"
             android:layout_width="match_parent"
@@ -37,12 +52,25 @@
             android:layout_height="match_parent"
             android:orientation="horizontal">
 
-            <ImageView
+            <RelativeLayout
                 android:layout_width="48dp"
                 android:layout_height="48dp"
-                android:layout_margin="4dp"
-                android:id="@+id/profileLogo"
-                android:layout_gravity="center"/>
+                android:layout_gravity="center">
+
+                <ImageView
+                    android:id="@+id/profileLogo"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:layout_margin="4dp" />
+
+                <ProgressBar
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:visibility="gone"
+                    android:id="@+id/profileLogoProgress"
+                    />
+
+            </RelativeLayout>
 
             <TextView
                 android:id="@+id/authorText"
