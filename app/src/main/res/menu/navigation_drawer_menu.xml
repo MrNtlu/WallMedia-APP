@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <group>
+        <item
+            android:title="Nav 1"
+            app:showAsAction="always"
+            android:id="@+id/nav1"/>
+        <item
+            android:title="Nav 2"
+            app:showAsAction="always"
+            android:id="@+id/nav2"/>
+
+    </group>
+
+    <item android:title="SubHeader">
+    <menu>
+        <item
+            android:title="Nav 3"
+            app:showAsAction="always"
+            android:id="@+id/nav3"/>
+        <item
+            android:title="Nav 4"
+            app:showAsAction="always"
+            android:id="@+id/nav4"/>
+    </menu>
+    </item>
+</menu>
