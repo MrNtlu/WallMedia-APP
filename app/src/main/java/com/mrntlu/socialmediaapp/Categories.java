@@ -11,6 +11,7 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -93,7 +94,9 @@ public class Categories extends Fragment {
 
         listviewLoadProgress=(ProgressBar)v.findViewById(R.id.listviewLoadProgress);
 
-        storageReference = FirebaseStorage.getInstance().getReference("uploads");
+        storageReference = FirebaseStorage.getInstance().getReference("uploads").child(category);
+
+
         databaseReference = FirebaseDatabase.getInstance().getReference();
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
@@ -138,14 +141,16 @@ public class Categories extends Fragment {
                                 Date currentTime = Calendar.getInstance().getTime();
                                 Uri downloadUri = task.getResult();
                                 miUrlOk = downloadUri.toString();
-
                                 PublicMessage publicMessage = new PublicMessage(message, userid, currentTime, miUrlOk);
-                                databaseReference.child("messages").push().setValue(publicMessage);
+
+                                databaseReference.child("messages").child(category).push().setValue(publicMessage);
 
                                 scrollMyListViewToBottom();
                                 imageUri = Uri.parse("");
                                 uploadImage.setImageDrawable(getResources().getDrawable(android.R.drawable.ic_menu_upload));
                                 progressBar.setVisibility(View.GONE);
+                                progressButton.setVisibility(View.GONE);
+                            }else{
                                 progressButton.setVisibility(View.GONE);
                             }
                         }
@@ -212,7 +217,7 @@ public class Categories extends Fragment {
         super.onStart();
         listviewLoadProgress.setVisibility(View.VISIBLE);
 
-        messageAdapter = new MessageAdapter(activity, databaseReference, userid,listviewLoadProgress);
+        messageAdapter = new MessageAdapter(getActivity(),category, databaseReference, userid,listviewLoadProgress);
 
         final GridLayoutManager gridLayoutManager=new GridLayoutManager(activity,2);
         listView.setLayoutManager(gridLayoutManager);

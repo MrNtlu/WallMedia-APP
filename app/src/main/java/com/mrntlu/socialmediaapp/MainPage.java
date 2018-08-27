@@ -5,6 +5,7 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
@@ -36,31 +37,32 @@ public class MainPage extends AppCompatActivity{
         setSupportActionBar(toolbar);
         toolbar.setTitleTextColor(Color.WHITE);
 
+        FragmentManager fragmentManager=getSupportFragmentManager();
+        fragmentManager.beginTransaction().replace(R.id.frame_layout,new Categories(MainPage.this,"Abstract")).commit();
+
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 Fragment fragment=null;
-                Class fragmentClass;
-                switch (item.getItemId()){
-                    case R.id.nav1:
-                        Toast.makeText(MainPage.this,"Nav 1",Toast.LENGTH_SHORT).show();
-                        fragmentClass=Categories.class;
-                        break;
-                    case R.id.nav2:
-                        Toast.makeText(MainPage.this,"Nav 2",Toast.LENGTH_SHORT).show();
-                        fragmentClass=Categories.class;
-                        break;
-                    case R.id.nav3:
-                        Toast.makeText(MainPage.this,"Nav 3",Toast.LENGTH_SHORT).show();
-                        fragmentClass=Categories.class;
-                        break;
-                    case R.id.nav4:
-                        Toast.makeText(MainPage.this,"Nav 4",Toast.LENGTH_SHORT).show();
-                        fragmentClass=Categories.class;
-                        break;
-                }
-                try{
-                    fragment=new Categories(MainPage.this,"Abstract");
+                try {
+                    switch (item.getItemId()){
+                        case R.id.nav1:
+                            Toast.makeText(MainPage.this, "Nav 1", Toast.LENGTH_SHORT).show();
+                            fragment=new Categories(MainPage.this,"Abstract");
+                            break;
+                        case R.id.nav2:
+                            Toast.makeText(MainPage.this, "Nav 2", Toast.LENGTH_SHORT).show();
+                            fragment=new Categories(MainPage.this,"Anime");
+                            break;
+                        case R.id.nav3:
+                            Toast.makeText(MainPage.this, "Nav 3", Toast.LENGTH_SHORT).show();
+                            fragment=new Categories(MainPage.this,"Sport");
+                            break;
+                        case R.id.nav4:
+                            Toast.makeText(MainPage.this, "Nav 4", Toast.LENGTH_SHORT).show();
+                            fragment=new Categories(MainPage.this,"Technology");
+                            break;
+                    }
                 }catch (Exception e){
                     e.printStackTrace();
                 }

@@ -56,6 +56,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
 
     Dialog customDialog;
     ProgressBar progressBar;
+    String category;
 
     private ChildEventListener listener=new ChildEventListener() {
         @Override
@@ -86,15 +87,15 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
         }
     };
 
-    public MessageAdapter(Activity activity, DatabaseReference ref, String displayName, ProgressBar progressBar) {
+    public MessageAdapter(Activity activity,String category, DatabaseReference ref, String displayName, ProgressBar progressBar) {
         this.activity = activity;
+        this.category=category;
         this.displayName = displayName;
-        this.databaseReference = ref.child("messages");
+        this.databaseReference = ref.child("messages").child(category);
         this.profilePicDatabase=ref.child("profile");
         this.progressBar=progressBar;
-        this.databaseReference.addChildEventListener(listener);
-
         dataSnapshots=new ArrayList<>();
+        this.databaseReference.addChildEventListener(listener);
     }
 
     @NonNull
@@ -149,19 +150,24 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
 
                 RequestOptions ro=new RequestOptions();
                 ro.error(R.drawable.ic_sync_problem_black_24dp).centerInside();
-                Glide.with(activity).setDefaultRequestOptions(ro).load(dataSnapshot.getValue(Upload.class).getImageUrl()).listener(new RequestListener<Drawable>() {
-                    @Override
-                    public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
-                        holder.profileLogoProgress.setVisibility(View.GONE);
-                        return false;
-                    }
 
-                    @Override
-                    public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
-                        holder.profileLogoProgress.setVisibility(View.GONE);
-                        return false;
-                    }
-                }).into(holder.profileLogo);
+                try {
+                    Glide.with(activity).setDefaultRequestOptions(ro).load(dataSnapshot.getValue(Upload.class).getImageUrl()).listener(new RequestListener<Drawable>() {
+                        @Override
+                        public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
+                            holder.profileLogoProgress.setVisibility(View.GONE);
+                            return false;
+                        }
+
+                        @Override
+                        public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
+                            holder.profileLogoProgress.setVisibility(View.GONE);
+                            return false;
+                        }
+                    }).into(holder.profileLogo);
+                }catch(Exception e){
+                    e.printStackTrace();
+                }
             }
 
             @Override
@@ -261,7 +267,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
             activity.startActivity(Intent.createChooser(i, "Share URL"));
         }
         catch (Exception e) {
-            Toasty.error(context, "error1 "+e.getMessage(), Toast.LENGTH_LONG).show();
+            Toasty.error(context, "Error! "+e.getMessage(), Toast.LENGTH_LONG).show();
             e.printStackTrace();
         }
     }
