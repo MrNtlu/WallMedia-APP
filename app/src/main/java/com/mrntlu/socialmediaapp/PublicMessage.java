@@ -1,7 +1,5 @@
 package com.mrntlu.socialmediaapp;
 
-import android.net.Uri;
-
 import java.util.Date;
 
 public class PublicMessage {

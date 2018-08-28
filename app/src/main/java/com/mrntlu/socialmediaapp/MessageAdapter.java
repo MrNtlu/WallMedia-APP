@@ -5,7 +5,6 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
@@ -15,11 +14,9 @@ import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -113,12 +110,6 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
 
         String author=message.getAuthor();
         holder.authorName.setText(author);
-
-//        String msg=message.getMessage();
-//        holder.messageText.setText(msg);
-
-//        String date=message.getDate().toString();
-//        holder.dateText.setText(date);
 
         RequestOptions requestOptions=new RequestOptions();
         requestOptions.override(1280,720);
@@ -274,8 +265,6 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
 
     public static class ViewHolder extends RecyclerView.ViewHolder{
         TextView authorName;
-//        TextView messageText;
-//        TextView dateText;
         ConstraintLayout constraintLayout;
         ImageView uploadedImage;
         ImageView profileLogo;
@@ -285,8 +274,6 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
         public ViewHolder(View itemView) {
             super(itemView);
             authorName=(TextView)itemView.findViewById(R.id.authorText);
-//            messageText=(TextView)itemView.findViewById(R.id.messageText);
-//            dateText=(TextView)itemView.findViewById(R.id.dateText);
             constraintLayout=(ConstraintLayout)itemView.findViewById(R.id.customMessage_layout);
             uploadedImage=(ImageView)itemView.findViewById(R.id.uploadedImage);
             profileLogo=(ImageView)itemView.findViewById(R.id.profileLogo);
