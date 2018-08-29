@@ -23,6 +23,12 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.DataSource;
 import com.bumptech.glide.load.engine.GlideException;
@@ -35,10 +41,15 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Calendar;
 
 import es.dmoral.toasty.Toasty;
 
@@ -54,6 +65,18 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
     Dialog customDialog;
     ProgressBar progressBar;
     String category;
+
+    /*TODO
+    https://wall.alphacoders.com/api.php#collapse_collection
+    https://wall.alphacoders.com/api2.0/get.php?auth=481cfa6f70112be63d18faaf10a597dd&method=search&term=boku+no+hero
+    https://wall.alphacoders.com/api2.0/get.php?auth=481cfa6f70112be63d18faaf10a597dd&method=category_list
+    https://wall.alphacoders.com/api2.0/get.php?auth=481cfa6f70112be63d18faaf10a597dd&method=category&id=3&page=1&sort=rating
+    https://github.com/bluelinelabs/LoganSquare
+    https://android-arsenal.com/details/1/1550
+    https://github.com/google/gson
+    https://www.youtube.com/watch?v=y2xtLqP8dSQ
+    https://www.youtube.com/results?search_query=android+json+parser
+     */
 
     private ChildEventListener listener=new ChildEventListener() {
         @Override
@@ -265,7 +288,6 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
 
     public static class ViewHolder extends RecyclerView.ViewHolder{
         TextView authorName;
-        ConstraintLayout constraintLayout;
         ImageView uploadedImage;
         ImageView profileLogo;
         CardView cardviewLayout;
@@ -274,7 +296,6 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
         public ViewHolder(View itemView) {
             super(itemView);
             authorName=(TextView)itemView.findViewById(R.id.authorText);
-            constraintLayout=(ConstraintLayout)itemView.findViewById(R.id.customMessage_layout);
             uploadedImage=(ImageView)itemView.findViewById(R.id.uploadedImage);
             profileLogo=(ImageView)itemView.findViewById(R.id.profileLogo);
             cardviewLayout=(CardView)itemView.findViewById(R.id.cardview_layout);
@@ -282,4 +303,43 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
             profileLogoProgress=(ProgressBar)itemView.findViewById(R.id.profileLogoProgress);
         }
     }
+
+    /*
+
+    //TODO onBind
+    //
+    // jsonParser(1);
+    private void jsonParser(int categories){
+        String url="https://wall.alphacoders.com/api2.0/get.php?auth="+API_TOKEN+"&method=category&id="+categories+"&page=1&sort=rating";
+
+        JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url, null,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        try {
+                            if (response.getBoolean("success")) {
+                                JSONArray jsonArray = response.getJSONArray("wallpapers");
+
+                                for (int i = 0; i < jsonArray.length(); i++) {
+                                    PublicMessage publicMessage = new PublicMessage("test",
+                                            "MrNtlu",  Calendar.getInstance().getTime(), jsonArray.getJSONObject(i).getString("url_thumb") );
+
+                                    notifyDataSetChanged();
+                                }
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                error.printStackTrace();
+            }
+        });
+
+        mQueue.add(request);
+    }
+
+    */
 }

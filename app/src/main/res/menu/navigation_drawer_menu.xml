@@ -26,4 +26,10 @@
             android:id="@+id/nav4"/>
     </menu>
     </item>
+
+    <item
+        android:title="Sign Out"
+        app:showAsAction="always"
+        android:id="@+id/sign_out"
+        />
 </menu>

@@ -83,7 +83,7 @@ public class Categories extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         v=inflater.inflate(R.layout.fragment_categories,container,false);
-        listView = (RecyclerView) v.findViewById(R.id.listView);
+        listView = (RecyclerView) v.findViewById(R.id.recyvclerView);
         editText = (EditText) v.findViewById(R.id.editText);
         sendButton = (Button) v.findViewById(R.id.sendButton);
         backButton = (ImageButton) v.findViewById(R.id.backButton);
