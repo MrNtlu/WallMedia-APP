@@ -4,32 +4,40 @@
 
     <group>
         <item
-            android:title="Nav 1"
+            android:title="SocialMedia"
             app:showAsAction="always"
-            android:id="@+id/nav1"/>
-        <item
-            android:title="Nav 2"
-            app:showAsAction="always"
-            android:id="@+id/nav2"/>
+            android:id="@+id/socialmedia_list"/>
 
     </group>
 
-    <item android:title="SubHeader">
-    <menu>
-        <item
-            android:title="Nav 3"
-            app:showAsAction="always"
-            android:id="@+id/nav3"/>
-        <item
-            android:title="Nav 4"
-            app:showAsAction="always"
-            android:id="@+id/nav4"/>
-    </menu>
+    <item android:title="Categories">
+        <menu>
+            <item
+                android:title="Abstract"
+                app:showAsAction="always"
+                android:id="@+id/abstract_list"/>
+            <item
+                android:title="Anime"
+                app:showAsAction="always"
+                android:id="@+id/anime"/>
+            <item
+                android:title="Comics"
+                app:showAsAction="always"
+                android:id="@+id/comics_list"/>
+            <item
+                android:title="Earth"
+                app:showAsAction="always"
+                android:id="@+id/earth_list"/>
+        </menu>
     </item>
 
-    <item
-        android:title="Sign Out"
-        app:showAsAction="always"
-        android:id="@+id/sign_out"
-        />
+
+    <group android:id="@+id/group" android:checkableBehavior="single">
+        <item
+            android:title="Sign Out"
+            app:showAsAction="always"
+            android:id="@+id/sign_out"
+            />
+    </group>
+
 </menu>

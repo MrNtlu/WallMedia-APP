@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,6 +19,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
+import com.jcodecraeer.xrecyclerview.XRecyclerView;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -29,18 +31,25 @@ import java.util.Calendar;
 
 public class ApiCategories extends Fragment {
 
+    //TODO SEARCH BY IMAGE https://wall.alphacoders.com/api2.0/get.php?auth=481cfa6f70112be63d18faaf10a597dd&method=search&term=boku+no+hero
+    //todo https://wall.alphacoders.com/api.php#collapse_category_count
+    //todo https://wall.alphacoders.com/api2.0/get.php?auth=481cfa6f70112be63d18faaf10a597dd&method=category_list
+    //TODO https://android-arsenal.com/details/1/2850
+
     View v;
-    RecyclerView listView;
+    XRecyclerView listView;
     ProgressBar listviewLoadProgress;
     CategoriesAdapter categoriesAdapter;
     Activity activity;
     int category;
+    int page;
 
     private RequestQueue mQueue;
     private final String API_TOKEN="481cfa6f70112be63d18faaf10a597dd";
 
     ArrayList<Uri> thumbLinks=new ArrayList<Uri>();
     ArrayList<Uri> imageLinks=new ArrayList<Uri>();
+    ArrayList<Integer> imageID=new ArrayList<Integer>();
 
     public ApiCategories() {
         // Required empty public constructor
@@ -61,7 +70,7 @@ public class ApiCategories extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         v=inflater.inflate(R.layout.fragment_api_categories, container, false);
-        listView = (RecyclerView) v.findViewById(R.id.recyvclerView);
+        listView = (XRecyclerView) v.findViewById(R.id.recyvclerView);
         listviewLoadProgress=(ProgressBar)v.findViewById(R.id.listviewLoadProgress);
         return v;
     }
@@ -70,14 +79,32 @@ public class ApiCategories extends Fragment {
     public void onStart() {
         super.onStart();
         listviewLoadProgress.setVisibility(View.VISIBLE);
-
-        categoriesAdapter = new CategoriesAdapter(getActivity(),thumbLinks,imageLinks);
+        page=1;
+        categoriesAdapter = new CategoriesAdapter(getActivity(),thumbLinks,imageLinks,listviewLoadProgress,imageID);
 
         final GridLayoutManager gridLayoutManager=new GridLayoutManager(activity,2);
         listView.setLayoutManager(gridLayoutManager);
         listView.setAdapter(categoriesAdapter);
         mQueue = Volley.newRequestQueue(activity);
-        jsonParser(category);
+        jsonParser(category,1);
+        listView.setPullRefreshEnabled(false);
+        listView.setLimitNumberToCallLoadMore(15);
+        listView.setLoadingListener(new XRecyclerView.LoadingListener() {
+            @Override
+            public void onRefresh() {
+                listView.refreshComplete();
+            }
+
+            @Override
+            public void onLoadMore() {
+                page++;
+                jsonParser(category,page);
+                listView.loadMoreComplete();
+                if (page>=15){
+                    listView.setLoadingMoreEnabled(false);
+                }
+            }
+        });
     }
 
     @Override
@@ -85,8 +112,8 @@ public class ApiCategories extends Fragment {
         super.onStop();
     }
 
-    private void jsonParser(int categories){
-        String url="https://wall.alphacoders.com/api2.0/get.php?auth="+API_TOKEN+"&method=category&id="+categories+"&page=1&sort=rating";
+    private void jsonParser(int categories,int page){
+        String url="https://wall.alphacoders.com/api2.0/get.php?auth="+API_TOKEN+"&method=category&id="+categories+"&page="+page+"&sort=rating";
 
         JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url, null,
                 new Response.Listener<JSONObject>() {
@@ -99,6 +126,7 @@ public class ApiCategories extends Fragment {
                                 for (int i = 0; i < jsonArray.length(); i++) {
                                     thumbLinks.add(Uri.parse(jsonArray.getJSONObject(i).getString("url_thumb")));
                                     imageLinks.add(Uri.parse(jsonArray.getJSONObject(i).getString("url_image")));
+                                    imageID.add(jsonArray.getJSONObject(i).getInt("id"));
                                 }
                                 categoriesAdapter.notifyDataSetChanged();
                             }

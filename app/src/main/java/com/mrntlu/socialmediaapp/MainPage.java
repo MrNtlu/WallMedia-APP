@@ -2,8 +2,6 @@ package com.mrntlu.socialmediaapp;
 
 import android.content.Intent;
 import android.graphics.Color;
-import android.net.Uri;
-import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
@@ -14,28 +12,12 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
-import com.android.volley.Request;
-import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonObjectRequest;
-import com.android.volley.toolbox.Volley;
-import com.google.android.gms.auth.api.Auth;
-import com.google.android.gms.auth.api.signin.GoogleSignIn;
-import com.google.android.gms.auth.api.signin.GoogleSignInClient;
-import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.firebase.auth.FirebaseAuth;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.net.URI;
-import java.util.ArrayList;
 
 import es.dmoral.toasty.Toasty;
 
@@ -56,6 +38,10 @@ public class MainPage extends AppCompatActivity{
         toolbar=(Toolbar) findViewById(R.id.toolbar);
         navigationView=(NavigationView)findViewById(R.id.nav_menu);
         drawerLayout=(DrawerLayout)findViewById(R.id.drawer_layout);
+        View headerView=navigationView.getHeaderView(0);
+        TextView navUsername=(TextView)headerView.findViewById(R.id.username_Text);
+        navUsername.setText(FirebaseAuth.getInstance().getCurrentUser().getDisplayName());
+
         setSupportActionBar(toolbar);
         toolbar.setTitleTextColor(Color.WHITE);
 
@@ -69,21 +55,20 @@ public class MainPage extends AppCompatActivity{
                 Fragment fragment=null;
                 try {
                     switch (item.getItemId()){
-                        case R.id.nav1:
-                            Toast.makeText(MainPage.this, "Nav 1", Toast.LENGTH_SHORT).show();
+                        case R.id.socialmedia_list:
+                            fragment=new Categories(MainPage.this,"Abstract");
+                            break;
+                        case R.id.abstract_list:
                             fragment=new ApiCategories(MainPage.this,1);
                             break;
-                        case R.id.nav2:
-                            Toast.makeText(MainPage.this, "Nav 2", Toast.LENGTH_SHORT).show();
-                            fragment=new Categories(MainPage.this,"Anime");
+                        case R.id.anime:
+                            fragment=new ApiCategories(MainPage.this,3);
                             break;
-                        case R.id.nav3:
-                            Toast.makeText(MainPage.this, "Nav 3", Toast.LENGTH_SHORT).show();
-                            fragment=new Categories(MainPage.this,"Sport");
+                        case R.id.comics_list:
+                            fragment=new ApiCategories(MainPage.this,8);
                             break;
-                        case R.id.nav4:
-                            Toast.makeText(MainPage.this, "Nav 4", Toast.LENGTH_SHORT).show();
-                            fragment=new Categories(MainPage.this,"Technology");
+                        case R.id.earth_list:
+                            fragment=new ApiCategories(MainPage.this,10);
                             break;
                         case R.id.sign_out:
                             Toasty.info(MainPage.this,"Logged OUT",Toast.LENGTH_SHORT).show();

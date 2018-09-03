@@ -185,7 +185,7 @@ public class MainActivity extends AppCompatActivity {
                             //updateUI(user);
                         } else {
                             // If sign in fails, display a message to the user.
-                            Log.w("test", "signInWithCredential:failure", task.getException());
+                            Log.d("test", "signInWithCredential:failure", task.getException());
                             Toasty.error(getApplicationContext(),"Auth Failed",Toast.LENGTH_SHORT).show();
                             //updateUI(null);
                         }

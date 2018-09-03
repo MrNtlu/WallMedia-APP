@@ -66,4 +66,19 @@
         app:layout_constraintTop_toTopOf="@+id/view2"
         app:srcCompat="@drawable/ic_share_black_24dp" />
 
+    <ProgressBar
+        android:id="@+id/imageLoadProgress"
+        style="?android:attr/progressBarStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@+id/uploadedImage"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/uploadedImage"
+        app:layout_constraintTop_toTopOf="@+id/uploadedImage" />
+
 </android.support.constraint.ConstraintLayout>

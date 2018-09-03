@@ -13,6 +13,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -46,14 +47,18 @@ public class CategoriesAdapter extends RecyclerView.Adapter<CategoriesAdapter.Vi
     private Activity activity;
     Dialog customDialog;
     String category;
+    ProgressBar progressBar;
 
     ArrayList<Uri> thumbLinks=new ArrayList<Uri>();
     ArrayList<Uri> imageLinks=new ArrayList<Uri>();
+    ArrayList<Integer> imageID=new ArrayList<Integer>();
 
-    public CategoriesAdapter(Activity activity, ArrayList<Uri> thumbLinks, ArrayList<Uri> imageLinks) {
+    public CategoriesAdapter(Activity activity, ArrayList<Uri> thumbLinks, ArrayList<Uri> imageLinks,ProgressBar progressBar,ArrayList<Integer> imageID) {
         this.activity = activity;
         this.thumbLinks = thumbLinks;
         this.imageLinks = imageLinks;
+        this.progressBar=progressBar;
+        this.imageID=imageID;
     }
 
     @NonNull
@@ -67,7 +72,6 @@ public class CategoriesAdapter extends RecyclerView.Adapter<CategoriesAdapter.Vi
     @Override
     public void onBindViewHolder(@NonNull final ViewHolder holder, final int position) {
         RequestOptions requestOptions=new RequestOptions();
-        requestOptions.override(1280,720);
         //requestOptions.placeholder(R.drawable.loading_process).centerInside();
         requestOptions.error(R.drawable.ic_sync_problem_black_24dp).centerInside();
 
@@ -85,13 +89,14 @@ public class CategoriesAdapter extends RecyclerView.Adapter<CategoriesAdapter.Vi
                 return false;
             }
         }).into(holder.uploadedImage);
+        progressBar.setVisibility(View.GONE);
         holder.uploadedImageProgressBar.setVisibility(View.GONE);
 
         holder.cardviewLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 customDialog=new Dialog(view.getContext(),android.R.style.Theme_Black_NoTitleBar);
-                showPopup(view,imageLinks.get(position).toString());
+                showPopup(view,imageLinks.get(position).toString(),imageID.get(position));
             }
         });
     }
@@ -141,19 +146,38 @@ public class CategoriesAdapter extends RecyclerView.Adapter<CategoriesAdapter.Vi
         }
     }
 
-    void showPopup(View v, final String imageURL){
+    void showPopup(View v, final String imageURL, final int id){
         ImageButton backButton,downloadButton,shareButton;
         ImageView uploadedImage;
+
         customDialog.setContentView(R.layout.image_dialog);
         backButton=(ImageButton)customDialog.findViewById(R.id.backButton);
         uploadedImage=(ImageView)customDialog.findViewById(R.id.uploadedImage);
         downloadButton=(ImageButton)customDialog.findViewById(R.id.downloadButton);
         shareButton=(ImageButton)customDialog.findViewById(R.id.shareButton);
+
+        final ProgressBar imageLoadProgress=(ProgressBar)customDialog.findViewById(R.id.imageLoadProgress);
         final ImageView finalUploaded=uploadedImage;
+
+        imageLoadProgress.setVisibility(View.VISIBLE);
+        Glide.with(v.getContext()).load(imageURL).listener(new RequestListener<Drawable>() {
+            @Override
+            public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
+                imageLoadProgress.setVisibility(View.GONE);
+                return false;
+            }
+
+            @Override
+            public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
+                imageLoadProgress.setVisibility(View.GONE);
+                return false;
+            }
+        }).into(uploadedImage);
+
         downloadButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                saveImage(finalUploaded.getDrawable(),"Wallpaper.png");
+                saveImage(finalUploaded.getDrawable(),id+".jpg");
             }
         });
 
@@ -170,7 +194,6 @@ public class CategoriesAdapter extends RecyclerView.Adapter<CategoriesAdapter.Vi
                 customDialog.dismiss();
             }
         });
-        Glide.with(v.getContext()).load(imageURL).into(uploadedImage);
         customDialog.show();
     }
 
