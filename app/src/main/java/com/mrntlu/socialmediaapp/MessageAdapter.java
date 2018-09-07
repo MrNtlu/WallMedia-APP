@@ -135,7 +135,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
         holder.authorName.setText(author);
 
         RequestOptions requestOptions=new RequestOptions();
-        requestOptions.override(1280,720);
+        //requestOptions.override(1280,720);
         //requestOptions.placeholder(R.drawable.loading_process).centerInside();
         requestOptions.error(R.drawable.ic_sync_problem_black_24dp).centerInside();
 

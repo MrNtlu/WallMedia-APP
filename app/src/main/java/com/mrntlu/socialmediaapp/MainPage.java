@@ -12,8 +12,12 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -30,6 +34,7 @@ public class MainPage extends AppCompatActivity{
     Toolbar toolbar;
     NavigationView navigationView;
     DrawerLayout drawerLayout;
+    ActionBarDrawerToggle toggle;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,11 +48,12 @@ public class MainPage extends AppCompatActivity{
         navUsername.setText(FirebaseAuth.getInstance().getCurrentUser().getDisplayName());
 
         setSupportActionBar(toolbar);
-        toolbar.setTitleTextColor(Color.WHITE);
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
+        toolbar.setLogo(R.mipmap.ic_launcher_round);
+        toolbar.setTitleMargin(4,4,4,4);
 
         FragmentManager fragmentManager=getSupportFragmentManager();
         fragmentManager.beginTransaction().replace(R.id.frame_layout,new Categories(MainPage.this,"Abstract")).commit();
-
 
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
@@ -89,10 +95,46 @@ public class MainPage extends AppCompatActivity{
             }
         });
 
-        ActionBarDrawerToggle toggle=new ActionBarDrawerToggle(MainPage.this,drawerLayout,toolbar,R.string.open,R.string.close);
+        toggle=new ActionBarDrawerToggle(MainPage.this,drawerLayout,toolbar,R.string.open,R.string.close);
         drawerLayout.addDrawerListener(toggle);
         toggle.syncState();
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater menuInflater=getMenuInflater();
+        menuInflater.inflate(R.menu.search_menu,menu);
+        MenuItem item=menu.findItem(R.id.searchToolbar);
+        final SearchView searchView=(SearchView)item.getActionView();
 
+        searchView.setOnQueryTextFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View view, boolean b) {
+                if (b){
+                    drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
+                    toggle.setDrawerIndicatorEnabled(false);
+                }
+                else if (!b){
+                    drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
+                    searchView.setIconified(true);
+                    toggle.setDrawerIndicatorEnabled(true);
+                }
+            }
+        });
+
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String s) {
+                getSupportFragmentManager().beginTransaction().replace(R.id.frame_layout, new SearchFragment(MainPage.this,s.replace(" ","+"))).commit();
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String s) {
+                return false;
+            }
+        });
+
+        return super.onCreateOptionsMenu(menu);
+    }
 }

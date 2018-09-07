@@ -107,29 +107,31 @@ public class CategoriesAdapter extends RecyclerView.Adapter<CategoriesAdapter.Vi
     }
 
     void saveImage(Drawable drawable, String imageName){
-        Toasty.info(activity, "Started to Save", Toast.LENGTH_SHORT).show();
-
-        Bitmap image=((BitmapDrawable) drawable).getBitmap();
-
-        File path= Environment.getExternalStorageDirectory();
-
-        File dir=new File(path+"/Download/");
-        dir.mkdir();
-
-        File file=new File(dir,imageName);
-        OutputStream out=null;
-
         try {
-            out=new FileOutputStream(file);
+            Bitmap image=((BitmapDrawable) drawable).getBitmap();
+            Toasty.info(activity, "Started to Save", Toast.LENGTH_SHORT).show();
+
+            File path= Environment.getExternalStorageDirectory();
+
+            File dir=new File(path+"/Download/");
+            dir.mkdir();
+
+            File file=new File(dir,imageName);
+
+            OutputStream out=new FileOutputStream(file);
             image.compress(Bitmap.CompressFormat.PNG,100,out);
             out.flush();
             out.close();
             Toasty.success(activity, "Saved", Toast.LENGTH_SHORT).show();
         }
+        catch (NullPointerException e){
+            Toasty.error(activity,"Wait for image to load!",Toast.LENGTH_SHORT).show();
+        }
         catch (Exception e){
             e.printStackTrace();
             Toasty.error(activity, "Error! " + e.getMessage(), Toast.LENGTH_LONG).show();
         }
+
     }
 
     public void shareDrawable(Context context, String imageURL, String fileName) {

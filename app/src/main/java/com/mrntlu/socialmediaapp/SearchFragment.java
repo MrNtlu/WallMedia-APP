@@ -6,10 +6,12 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -24,39 +26,33 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 
+import es.dmoral.toasty.Toasty;
 
-public class ApiCategories extends Fragment {
-
-    //TODO SEARCH BY IMAGE https://wall.alphacoders.com/api2.0/get.php?auth=481cfa6f70112be63d18faaf10a597dd&method=search&term=boku+no+hero
-    //todo https://wall.alphacoders.com/api.php#collapse_category_count
-    //todo https://wall.alphacoders.com/api2.0/get.php?auth=481cfa6f70112be63d18faaf10a597dd&method=category_list
-    //TODO https://android-arsenal.com/details/1/2850
+public class SearchFragment extends Fragment {
+    private final String API_TOKEN="481cfa6f70112be63d18faaf10a597dd";
+    private RequestQueue mQueue;
 
     View v;
     XRecyclerView listView;
     ProgressBar listviewLoadProgress;
     CategoriesAdapter categoriesAdapter;
     Activity activity;
-    int category;
     int page;
-
-    private RequestQueue mQueue;
-    private final String API_TOKEN="481cfa6f70112be63d18faaf10a597dd";
+    int pageLimit;
+    String searchText;
 
     ArrayList<Uri> thumbLinks=new ArrayList<Uri>();
     ArrayList<Uri> imageLinks=new ArrayList<Uri>();
     ArrayList<Integer> imageID=new ArrayList<Integer>();
 
-    public ApiCategories() {
-        // Required empty public constructor
+    @SuppressLint("ValidFragment")
+    public SearchFragment(Activity activity, String searchText) {
+        this.activity = activity;
+        this.searchText = searchText;
     }
 
-    @SuppressLint("ValidFragment")
-    public ApiCategories(Activity activity, int category) {
-        this.activity = activity;
-        this.category = category;
+    public SearchFragment() {
     }
 
     @Override
@@ -79,7 +75,7 @@ public class ApiCategories extends Fragment {
         listView.setLayoutManager(gridLayoutManager);
         listView.setAdapter(categoriesAdapter);
         mQueue = Volley.newRequestQueue(activity);
-        jsonParser(category,1);
+        jsonParser(1);
         listView.setPullRefreshEnabled(false);
         listView.setLimitNumberToCallLoadMore(15);
         listView.setLoadingListener(new XRecyclerView.LoadingListener() {
@@ -91,17 +87,17 @@ public class ApiCategories extends Fragment {
             @Override
             public void onLoadMore() {
                 page++;
-                jsonParser(category,page);
+                jsonParser(page);
                 listView.loadMoreComplete();
-                if (page>=15){
+                if (page>=pageLimit/30){
                     listView.setLoadingMoreEnabled(false);
                 }
             }
         });
     }
 
-    private void jsonParser(int categories,int page){
-        String url="https://wall.alphacoders.com/api2.0/get.php?auth="+API_TOKEN+"&method=category&id="+categories+"&page="+page+"&sort=rating";
+    private void jsonParser(int page){
+        String url="https://wall.alphacoders.com/api2.0/get.php?auth="+API_TOKEN+"&method=search&term="+searchText+"&page="+page;
 
         JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url, null,
                 new Response.Listener<JSONObject>() {
@@ -109,8 +105,12 @@ public class ApiCategories extends Fragment {
                     public void onResponse(JSONObject response) {
                         try {
                             if (response.getBoolean("success")) {
+                                pageLimit=response.getInt("total_match");
+                                if (pageLimit<=0){
+                                    Toasty.error(activity,"No Image Found", Toast.LENGTH_LONG).show();
+                                    listviewLoadProgress.setVisibility(View.GONE);
+                                }
                                 JSONArray jsonArray = response.getJSONArray("wallpapers");
-
                                 for (int i = 0; i < jsonArray.length(); i++) {
                                     thumbLinks.add(Uri.parse(jsonArray.getJSONObject(i).getString("url_thumb")));
                                     imageLinks.add(Uri.parse(jsonArray.getJSONObject(i).getString("url_image")));
