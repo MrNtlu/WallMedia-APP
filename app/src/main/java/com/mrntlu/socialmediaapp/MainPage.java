@@ -1,7 +1,6 @@
 package com.mrntlu.socialmediaapp;
 
 import android.content.Intent;
-import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
@@ -12,7 +11,6 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -20,11 +18,8 @@ import android.view.View;
 import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.google.firebase.auth.FirebaseAuth;
-
 import es.dmoral.toasty.Toasty;
-
 
 public class MainPage extends AppCompatActivity{
 
@@ -35,6 +30,11 @@ public class MainPage extends AppCompatActivity{
     NavigationView navigationView;
     DrawerLayout drawerLayout;
     ActionBarDrawerToggle toggle;
+
+    @Override
+    public void onBackPressed() {
+
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,8 +49,6 @@ public class MainPage extends AppCompatActivity{
 
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
-        toolbar.setLogo(R.mipmap.ic_launcher_round);
-        toolbar.setTitleMargin(4,4,4,4);
 
         FragmentManager fragmentManager=getSupportFragmentManager();
         fragmentManager.beginTransaction().replace(R.id.frame_layout,new Categories(MainPage.this,"Abstract")).commit();
@@ -112,12 +110,10 @@ public class MainPage extends AppCompatActivity{
             public void onFocusChange(View view, boolean b) {
                 if (b){
                     drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
-                    toggle.setDrawerIndicatorEnabled(false);
                 }
                 else if (!b){
                     drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
                     searchView.setIconified(true);
-                    toggle.setDrawerIndicatorEnabled(true);
                 }
             }
         });

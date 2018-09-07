@@ -20,9 +20,8 @@
             android:layout_height="?android:attr/actionBarSize"
             android:id="@+id/toolbar"
             android:elevation="2dp"
-            android:background="@color/colorPrimaryDark" >
-
-        </android.support.v7.widget.Toolbar>
+            android:theme="@style/ToolbarColoredBackArrow"
+            android:background="@color/colorPrimaryDark" />
 
         <FrameLayout
             android:layout_width="0dp"
