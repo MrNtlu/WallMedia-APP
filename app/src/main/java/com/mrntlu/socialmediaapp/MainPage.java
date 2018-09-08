@@ -51,7 +51,7 @@ public class MainPage extends AppCompatActivity{
         getSupportActionBar().setDisplayShowTitleEnabled(false);
 
         FragmentManager fragmentManager=getSupportFragmentManager();
-        fragmentManager.beginTransaction().replace(R.id.frame_layout,new Categories(MainPage.this,"Abstract")).commit();
+        fragmentManager.beginTransaction().replace(R.id.frame_layout,new MainFragment(MainPage.this)).commit();
 
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
@@ -59,20 +59,83 @@ public class MainPage extends AppCompatActivity{
                 Fragment fragment=null;
                 try {
                     switch (item.getItemId()){
+                        case R.id.mainpage_list:
+                            fragment=new MainFragment(MainPage.this);
+                            break;
                         case R.id.socialmedia_list:
                             fragment=new Categories(MainPage.this,"Abstract");
                             break;
                         case R.id.abstract_list:
                             fragment=new ApiCategories(MainPage.this,1);
                             break;
+                        case R.id.animal_list:
+                            fragment=new ApiCategories(MainPage.this,2);
+                            break;
                         case R.id.anime:
                             fragment=new ApiCategories(MainPage.this,3);
+                            break;
+                        case R.id.artistic:
+                            fragment=new ApiCategories(MainPage.this,4);
                             break;
                         case R.id.comics_list:
                             fragment=new ApiCategories(MainPage.this,8);
                             break;
+                        case R.id.dark_list:
+                            fragment=new ApiCategories(MainPage.this,9);
+                            break;
                         case R.id.earth_list:
                             fragment=new ApiCategories(MainPage.this,10);
+                            break;
+                        case R.id.fantasy_list:
+                            fragment=new ApiCategories(MainPage.this,11);
+                            break;
+                        case R.id.game_list:
+                            fragment=new ApiCategories(MainPage.this,14);
+                            break;
+                        case R.id.holiday_list:
+                            fragment=new ApiCategories(MainPage.this,15);
+                            break;
+                        case R.id.Humor_list:
+                            fragment=new ApiCategories(MainPage.this,13);
+                            break;
+                        case R.id.man_made_list:
+                            fragment=new ApiCategories(MainPage.this,16);
+                            break;
+                        case R.id.Military_list:
+                            fragment=new ApiCategories(MainPage.this,18);
+                            break;
+                        case R.id.Misc_list:
+                            fragment=new ApiCategories(MainPage.this,19);
+                            break;
+                        case R.id.Movie_list:
+                            fragment=new ApiCategories(MainPage.this,20);
+                            break;
+                        case R.id.Music_list:
+                            fragment=new ApiCategories(MainPage.this,22);
+                            break;
+                        case R.id.Photography_list:
+                            fragment=new ApiCategories(MainPage.this,24);
+                            break;
+                        case R.id.Sci_fi_list:
+                            fragment=new ApiCategories(MainPage.this,27);
+                            break;
+                        case R.id.Sports_list:
+                            fragment=new ApiCategories(MainPage.this,28);
+                            break;
+                        case R.id.Technology_list:
+                            fragment=new ApiCategories(MainPage.this,30);
+                            break;
+                        case R.id.TV_Show_list:
+                            fragment=new ApiCategories(MainPage.this,29);
+                            break;
+                        case R.id.Vehicles_list:
+                            fragment=new ApiCategories(MainPage.this,31);
+                            break;
+                        case R.id.video_game_list:
+                            fragment=new ApiCategories(MainPage.this,32);
+                            break;
+                        case R.id.Weapons_list:
+                            fragment=new ApiCategories(MainPage.this,34);
                             break;
                         case R.id.sign_out:
                             Toasty.info(MainPage.this,"Logged OUT",Toast.LENGTH_SHORT).show();

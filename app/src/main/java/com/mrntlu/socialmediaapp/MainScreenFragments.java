@@ -10,7 +10,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
-import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -26,11 +25,11 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
-import es.dmoral.toasty.Toasty;
+public class MainScreenFragments extends Fragment {
 
-public class SearchFragment extends Fragment {
     private final String API_TOKEN="481cfa6f70112be63d18faaf10a597dd";
     private RequestQueue mQueue;
+    private final String PARSE_URL="https://wall.alphacoders.com/api2.0/get.php?auth="+API_TOKEN+"&method=";//"&page="+;
 
     View v;
     XRecyclerView listView;
@@ -38,20 +37,19 @@ public class SearchFragment extends Fragment {
     CategoriesAdapter categoriesAdapter;
     Activity activity;
     int page;
-    int pageLimit;
-    String searchText;
+    String method;
 
     ArrayList<Uri> thumbLinks=new ArrayList<Uri>();
     ArrayList<Uri> imageLinks=new ArrayList<Uri>();
     ArrayList<Integer> imageID=new ArrayList<Integer>();
 
-    @SuppressLint("ValidFragment")
-    public SearchFragment(Activity activity, String searchText) {
-        this.activity = activity;
-        this.searchText = searchText;
+    public MainScreenFragments() {
     }
 
-    public SearchFragment() {
+    @SuppressLint("ValidFragment")
+    public MainScreenFragments(Activity activity, String method) {
+        this.activity = activity;
+        this.method = method;
     }
 
     @Override
@@ -76,6 +74,7 @@ public class SearchFragment extends Fragment {
         mQueue = Volley.newRequestQueue(activity);
         jsonParser(1);
         listView.setPullRefreshEnabled(false);
+        listView.setLimitNumberToCallLoadMore(30);
         listView.setLoadingListener(new XRecyclerView.LoadingListener() {
             @Override
             public void onRefresh() {
@@ -87,7 +86,7 @@ public class SearchFragment extends Fragment {
                 page++;
                 jsonParser(page);
                 listView.loadMoreComplete();
-                if (page>=pageLimit/30){
+                if (page>=30){
                     listView.setLoadingMoreEnabled(false);
                 }
             }
@@ -95,19 +94,13 @@ public class SearchFragment extends Fragment {
     }
 
     private void jsonParser(int page){
-        String url="https://wall.alphacoders.com/api2.0/get.php?auth="+API_TOKEN+"&method=search&term="+searchText+"&page="+page;
 
-        JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url, null,
+        JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, PARSE_URL+method+"&page="+page, null,
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
                         try {
                             if (response.getBoolean("success")) {
-                                pageLimit=response.getInt("total_match");
-                                if (pageLimit<=0){
-                                    Toasty.error(activity,"No Image Found", Toast.LENGTH_LONG).show();
-                                    listviewLoadProgress.setVisibility(View.GONE);
-                                }
                                 JSONArray jsonArray = response.getJSONArray("wallpapers");
                                 for (int i = 0; i < jsonArray.length(); i++) {
                                     thumbLinks.add(Uri.parse(jsonArray.getJSONObject(i).getString("url_thumb")));
@@ -118,7 +111,6 @@ public class SearchFragment extends Fragment {
                             }
                         } catch (JSONException e) {
                             e.printStackTrace();
-                            Toasty.error(activity,"Error Occurred!",Toast.LENGTH_SHORT).show();
                         }
                     }
                 }, new Response.ErrorListener() {
@@ -130,4 +122,5 @@ public class SearchFragment extends Fragment {
 
         mQueue.add(request);
     }
+
 }

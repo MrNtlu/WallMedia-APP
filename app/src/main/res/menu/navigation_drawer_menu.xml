@@ -4,8 +4,14 @@
 
     <group>
         <item
+            android:title="Main Page"
+            app:showAsAction="always"
+            android:icon="@drawable/ic_home_black_24dp"
+            android:id="@+id/mainpage_list"/>
+        <item
             android:title="SocialMedia"
             app:showAsAction="always"
+            android:icon="@drawable/ic_share_black_24dp"
             android:id="@+id/socialmedia_list"/>
 
     </group>
@@ -17,25 +23,105 @@
                 app:showAsAction="always"
                 android:id="@+id/abstract_list"/>
             <item
+                android:title="Animal"
+                app:showAsAction="always"
+                android:id="@+id/animal_list"/>
+            <item
                 android:title="Anime"
                 app:showAsAction="always"
                 android:id="@+id/anime"/>
+            <item
+                android:title="Artistic"
+                app:showAsAction="always"
+                android:id="@+id/artistic"/>
             <item
                 android:title="Comics"
                 app:showAsAction="always"
                 android:id="@+id/comics_list"/>
             <item
+                android:title="Dark"
+                app:showAsAction="always"
+                android:id="@+id/dark_list"/>
+            <item
                 android:title="Earth"
                 app:showAsAction="always"
                 android:id="@+id/earth_list"/>
+            <item
+                android:title="Fantasy"
+                app:showAsAction="always"
+                android:id="@+id/fantasy_list"/>
+            <item
+                android:title="Game"
+                app:showAsAction="always"
+                android:id="@+id/game_list"/>
+            <item
+                android:title="Holiday"
+                app:showAsAction="always"
+                android:id="@+id/holiday_list"/>
+            <item
+                android:title="Humor"
+                app:showAsAction="always"
+                android:id="@+id/Humor_list"/>
+            <item
+                android:title="Man Made"
+                app:showAsAction="always"
+                android:id="@+id/man_made_list"/>
+            <item
+                android:title="Military"
+                app:showAsAction="always"
+                android:id="@+id/Military_list"/>
+            <item
+                android:title="Misc"
+                app:showAsAction="always"
+                android:id="@+id/Misc_list"/>
+            <item
+                android:title="Movie"
+                app:showAsAction="always"
+                android:id="@+id/Movie_list"/>
+            <item
+                android:title="Music"
+                app:showAsAction="always"
+                android:id="@+id/Music_list"/>
+            <item
+                android:title="Photography"
+                app:showAsAction="always"
+                android:id="@+id/Photography_list"/>
+            <item
+                android:title="Sci Fi"
+                app:showAsAction="always"
+                android:id="@+id/Sci_fi_list"/>
+            <item
+                android:title="Sports"
+                app:showAsAction="always"
+                android:id="@+id/Sports_list"/>
+            <item
+                android:title="Technology"
+                app:showAsAction="always"
+                android:id="@+id/Technology_list"/>
+            <item
+                android:title="TV Show"
+                app:showAsAction="always"
+                android:id="@+id/TV_Show_list"/>
+            <item
+                android:title="Vehicles"
+                app:showAsAction="always"
+                android:id="@+id/Vehicles_list"/>
+            <item
+                android:title="Video Game"
+                app:showAsAction="always"
+                android:id="@+id/video_game_list"/>
+            <item
+                android:title="Weapons"
+                app:showAsAction="always"
+                android:id="@+id/Weapons_list"/>
         </menu>
     </item>
-
 
     <group android:id="@+id/group" android:checkableBehavior="single">
         <item
             android:title="Sign Out"
             app:showAsAction="always"
+            android:icon="@drawable/ic_exit_to_app_black_24dp"
             android:id="@+id/sign_out"
             />
     </group>

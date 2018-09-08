@@ -19,7 +19,6 @@
             android:paddingBottom="2dp"
             android:layout_height="?android:attr/actionBarSize"
             android:id="@+id/toolbar"
-            android:elevation="2dp"
             android:theme="@style/ToolbarColoredBackArrow"
             android:background="@color/colorPrimaryDark" />
 
@@ -41,6 +40,7 @@
         app:headerLayout="@layout/header"
         android:layout_gravity="start"
         android:id="@+id/nav_menu"
+
         app:menu="@menu/navigation_drawer_menu"
         android:fitsSystemWindows="true" />
 
