@@ -119,6 +119,12 @@
 
     <group android:id="@+id/group" android:checkableBehavior="single">
         <item
+            android:title="About"
+            app:showAsAction="always"
+            android:icon="@drawable/ic_settings_black_24dp"
+            android:id="@+id/about_fragment"
+            />
+        <item
             android:title="Sign Out"
             app:showAsAction="always"
             android:icon="@drawable/ic_exit_to_app_black_24dp"

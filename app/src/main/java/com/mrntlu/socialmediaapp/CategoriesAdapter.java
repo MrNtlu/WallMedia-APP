@@ -2,6 +2,7 @@ package com.mrntlu.socialmediaapp;
 
 import android.app.Activity;
 import android.app.Dialog;
+import android.app.WallpaperManager;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -37,6 +38,7 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
 
@@ -150,11 +152,10 @@ public class CategoriesAdapter extends RecyclerView.Adapter<CategoriesAdapter.Vi
 
     void showPopup(View v, final String imageURL, final int id){
         ImageButton backButton,downloadButton,shareButton;
-        ImageView uploadedImage;
 
         customDialog.setContentView(R.layout.image_dialog);
         backButton=(ImageButton)customDialog.findViewById(R.id.backButton);
-        uploadedImage=(ImageView)customDialog.findViewById(R.id.uploadedImage);
+        ImageView uploadedImage=(ImageView)customDialog.findViewById(R.id.uploadedImage);
         downloadButton=(ImageButton)customDialog.findViewById(R.id.downloadButton);
         shareButton=(ImageButton)customDialog.findViewById(R.id.shareButton);
 

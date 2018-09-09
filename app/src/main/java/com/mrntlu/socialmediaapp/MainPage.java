@@ -137,6 +137,9 @@ public class MainPage extends AppCompatActivity{
                         case R.id.Weapons_list:
                             fragment=new ApiCategories(MainPage.this,34);
                             break;
+                        case R.id.about_fragment:
+                            fragment=new AboutFragment();
+                            break;
                         case R.id.sign_out:
                             Toasty.info(MainPage.this,"Logged OUT",Toast.LENGTH_SHORT).show();
                             FirebaseAuth.getInstance().signOut();
