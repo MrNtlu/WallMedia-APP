@@ -12,6 +12,7 @@ import android.net.Uri;
 import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -31,10 +32,16 @@ import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.Target;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.joaquimley.faboptions.FabOptions;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -50,10 +57,15 @@ public class CategoriesAdapter extends RecyclerView.Adapter<CategoriesAdapter.Vi
     Dialog customDialog;
     String category;
     ProgressBar progressBar;
+    private DatabaseReference databaseReference;
+    String displayName;
 
     ArrayList<Uri> thumbLinks=new ArrayList<Uri>();
     ArrayList<Uri> imageLinks=new ArrayList<Uri>();
     ArrayList<Integer> imageID=new ArrayList<Integer>();
+
+    //TODO https://stackoverflow.com/questions/43959582/how-to-check-if-a-value-exists-in-firebase-database-android
+    //android firebase check if data exists
 
     public CategoriesAdapter(Activity activity, ArrayList<Uri> thumbLinks, ArrayList<Uri> imageLinks,ProgressBar progressBar,ArrayList<Integer> imageID) {
         this.activity = activity;
@@ -68,6 +80,8 @@ public class CategoriesAdapter extends RecyclerView.Adapter<CategoriesAdapter.Vi
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View v= LayoutInflater.from(activity).inflate(R.layout.categories_custom,parent,false);
         ViewHolder viewHolder=new ViewHolder(v);
+        databaseReference = FirebaseDatabase.getInstance().getReference();
+        displayName=FirebaseAuth.getInstance().getCurrentUser().getDisplayName();
         return viewHolder;
     }
 
@@ -136,7 +150,7 @@ public class CategoriesAdapter extends RecyclerView.Adapter<CategoriesAdapter.Vi
 
     }
 
-    public void shareDrawable(Context context, String imageURL, String fileName) {
+    public void shareDrawable(Context context, String imageURL) {
         try {
             Intent i = new Intent(Intent.ACTION_SEND);
             i.setType("text/plain");
@@ -152,15 +166,73 @@ public class CategoriesAdapter extends RecyclerView.Adapter<CategoriesAdapter.Vi
 
     void showPopup(View v, final String imageURL, final int id){
         ImageButton backButton,downloadButton,shareButton;
-
         customDialog.setContentView(R.layout.image_dialog);
-        backButton=(ImageButton)customDialog.findViewById(R.id.backButton);
         ImageView uploadedImage=(ImageView)customDialog.findViewById(R.id.uploadedImage);
-        downloadButton=(ImageButton)customDialog.findViewById(R.id.downloadButton);
-        shareButton=(ImageButton)customDialog.findViewById(R.id.shareButton);
-
         final ProgressBar imageLoadProgress=(ProgressBar)customDialog.findViewById(R.id.imageLoadProgress);
         final ImageView finalUploaded=uploadedImage;
+        final ImageView starImage=(ImageView)customDialog.findViewById(R.id.starImage);
+
+        final FabOptions fabOptions=(FabOptions)customDialog.findViewById(R.id.fab_options);
+        fabOptions.setButtonsMenu(R.menu.fab_menu);
+        fabOptions.setBackgroundColor(activity, ContextCompat.getColor(activity,R.color.colorAccent));
+        fabOptions.setFabColor(R.color.colorAccent);
+
+        fabOptions.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                switch (view.getId()) {
+                    case R.id.faboptions_favorite:
+                        databaseReference.child(displayName).orderByChild("imageURL").equalTo(imageURL).addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                if (dataSnapshot.exists()){
+                                    removeFromFirebase(displayName,imageURL);
+                                    starImage.setVisibility(View.GONE);
+                                }else{
+                                    FavoritesMessage favoritesMessage=new FavoritesMessage(imageURL);
+                                    databaseReference.child(displayName).push().setValue(favoritesMessage);
+                                    starImage.setVisibility(View.VISIBLE);
+                                }
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                            }
+                        });
+                        break;
+
+                    case R.id.faboptions_back:
+                        customDialog.dismiss();
+                        break;
+                    case R.id.faboptions_download:
+                        saveImage(finalUploaded.getDrawable(),id+".jpg");
+                        break;
+
+                    case R.id.faboptions_share:
+                        shareDrawable(activity,imageURL);
+                        break;
+
+                    default:
+                        // no-op
+                }
+            }
+        });
+
+        databaseReference.child(displayName).orderByChild("imageURL").equalTo(imageURL).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()){
+                    starImage.setVisibility(View.VISIBLE);
+                }
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
 
         imageLoadProgress.setVisibility(View.VISIBLE);
         Glide.with(v.getContext()).load(imageURL).listener(new RequestListener<Drawable>() {
@@ -177,27 +249,23 @@ public class CategoriesAdapter extends RecyclerView.Adapter<CategoriesAdapter.Vi
             }
         }).into(uploadedImage);
 
-        downloadButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                saveImage(finalUploaded.getDrawable(),id+".jpg");
-            }
-        });
-
-        shareButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                shareDrawable(activity,imageURL,"filename");
-            }
-        });
-
-        backButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                customDialog.dismiss();
-            }
-        });
         customDialog.show();
+    }
+
+    void removeFromFirebase(String displayName,String URL){
+        databaseReference.child(displayName).orderByChild("imageURL").equalTo(URL).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for (DataSnapshot child: dataSnapshot.getChildren()) {
+                    child.getRef().removeValue();
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder{

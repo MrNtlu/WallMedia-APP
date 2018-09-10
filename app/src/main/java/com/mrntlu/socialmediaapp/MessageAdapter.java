@@ -135,8 +135,6 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
         holder.authorName.setText(author);
 
         RequestOptions requestOptions=new RequestOptions();
-        //requestOptions.override(1280,720);
-        //requestOptions.placeholder(R.drawable.loading_process).centerInside();
         requestOptions.error(R.drawable.ic_sync_problem_black_24dp).centerInside();
 
         Uri uri=Uri.parse(message.getImageUrl());
@@ -239,31 +237,31 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
         ImageButton backButton,downloadButton,shareButton;
         ImageView uploadedImage;
         customDialog.setContentView(R.layout.image_dialog);
-        backButton=(ImageButton)customDialog.findViewById(R.id.backButton);
+        //backButton=(ImageButton)customDialog.findViewById(R.id.backButton);
         uploadedImage=(ImageView)customDialog.findViewById(R.id.uploadedImage);
-        downloadButton=(ImageButton)customDialog.findViewById(R.id.downloadButton);
-        shareButton=(ImageButton)customDialog.findViewById(R.id.shareButton);
+//        downloadButton=(ImageButton)customDialog.findViewById(R.id.downloadButton);
+//        shareButton=(ImageButton)customDialog.findViewById(R.id.shareButton);
         final ImageView finalUploaded=uploadedImage;
-        downloadButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                saveImage(finalUploaded.getDrawable(),"Wallpaper.png");
-            }
-        });
+//        downloadButton.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                saveImage(finalUploaded.getDrawable(),"Wallpaper.png");
+//            }
+//        });
+//
+//        shareButton.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                shareDrawable(activity,imageURL,"filename");
+//            }
+//        });
 
-        shareButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                shareDrawable(activity,imageURL,"filename");
-            }
-        });
-
-        backButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                customDialog.dismiss();
-            }
-        });
+//        backButton.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                customDialog.dismiss();
+//            }
+//        });
         Glide.with(v.getContext()).load(imageURL).into(uploadedImage);
         customDialog.show();
     }
@@ -295,12 +293,12 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
 
         public ViewHolder(View itemView) {
             super(itemView);
-            authorName=(TextView)itemView.findViewById(R.id.authorText);
+            //authorName=(TextView)itemView.findViewById(R.id.authorText);
             uploadedImage=(ImageView)itemView.findViewById(R.id.uploadedImage);
-            profileLogo=(ImageView)itemView.findViewById(R.id.profileLogo);
+            //profileLogo=(ImageView)itemView.findViewById(R.id.profileLogo);
             cardviewLayout=(CardView)itemView.findViewById(R.id.cardview_layout);
             uploadedImageProgressBar=(ProgressBar)itemView.findViewById(R.id.uploadedImageProgressBar);
-            profileLogoProgress=(ProgressBar)itemView.findViewById(R.id.profileLogoProgress);
+            //profileLogoProgress=(ProgressBar)itemView.findViewById(R.id.profileLogoProgress);
         }
     }
 

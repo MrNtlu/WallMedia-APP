@@ -1,18 +1,14 @@
 package com.mrntlu.socialmediaapp;
 
-import java.util.Date;
-
 public class PublicMessage {
 
     private String imageUrl;
     private String message;
     private String author;
-    private Date date;
 
-    public PublicMessage(String message, String author,Date date, String imageUrl) {
+    public PublicMessage(String message, String author, String imageUrl) {
         this.message = message;
         this.author = author;
-        this.date=date;
         this.imageUrl = imageUrl;
     }
 
@@ -25,10 +21,6 @@ public class PublicMessage {
 
     public String getAuthor() {
         return author;
-    }
-
-    public Date getDate() {
-        return date;
     }
 
     public String getImageUrl() {

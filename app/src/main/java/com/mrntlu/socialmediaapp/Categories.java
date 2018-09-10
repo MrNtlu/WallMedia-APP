@@ -137,10 +137,9 @@ public class Categories extends Fragment {
                             if (task.isSuccessful()) {
                                 if (userid == null) userid = "Anonymous";
 
-                                Date currentTime = Calendar.getInstance().getTime();
                                 Uri downloadUri = task.getResult();
                                 miUrlOk = downloadUri.toString();
-                                PublicMessage publicMessage = new PublicMessage(message, userid, currentTime, miUrlOk);
+                                PublicMessage publicMessage = new PublicMessage(message, userid, miUrlOk);
 
                                 databaseReference.child("messages").child(category).push().setValue(publicMessage);
 
