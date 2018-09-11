@@ -2,76 +2,32 @@
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/dialog_layout"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:alpha="100">
 
-
-    <!--<View-->
-        <!--android:id="@+id/view2"-->
-        <!--android:layout_width="0dp"-->
-        <!--android:layout_height="52dp"-->
-        <!--android:background="@android:color/white"-->
-        <!--app:layout_constraintBottom_toBottomOf="parent"-->
-        <!--app:layout_constraintEnd_toEndOf="parent"-->
-        <!--app:layout_constraintStart_toStartOf="parent" />-->
-
-    <ImageView
-        android:id="@+id/uploadedImage"
+    <com.jgabrielfreitas.core.BlurImageView
+        android:id="@+id/backgroundImage"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:scaleType="fitCenter"
+        android:scaleType="centerCrop"
+        android:alpha="0.5"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <!--<ImageButton-->
-        <!--android:id="@+id/backButton"-->
-        <!--android:layout_width="wrap_content"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:layout_marginBottom="2dp"-->
-        <!--android:layout_marginStart="16dp"-->
-        <!--android:layout_marginTop="2dp"-->
-        <!--android:background="@android:color/transparent"-->
-        <!--app:layout_constraintBottom_toBottomOf="@+id/view2"-->
-        <!--app:layout_constraintStart_toStartOf="parent"-->
-        <!--app:layout_constraintTop_toBottomOf="@+id/uploadedImage"-->
-        <!--app:srcCompat="@drawable/ic_arrow_back_black_48dp" />-->
-
-    <!--<ImageButton-->
-        <!--android:id="@+id/downloadButton"-->
-        <!--android:layout_width="wrap_content"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:layout_marginBottom="2dp"-->
-        <!--android:layout_marginEnd="16dp"-->
-        <!--android:layout_marginTop="2dp"-->
-        <!--android:background="@android:color/transparent"-->
-        <!--app:layout_constraintBottom_toBottomOf="@+id/view2"-->
-        <!--app:layout_constraintEnd_toStartOf="@+id/guideline4"-->
-        <!--app:layout_constraintTop_toBottomOf="@+id/uploadedImage"-->
-        <!--app:srcCompat="@drawable/ic_file_download_black_24dp" />-->
-
-    <!--<ImageButton-->
-        <!--android:id="@+id/shareButton"-->
-        <!--android:layout_width="wrap_content"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:layout_marginBottom="2dp"-->
-        <!--android:layout_marginEnd="16dp"-->
-        <!--android:layout_marginTop="2dp"-->
-        <!--android:background="@android:color/transparent"-->
-        <!--app:layout_constraintBottom_toBottomOf="@+id/view2"-->
-        <!--app:layout_constraintEnd_toEndOf="@+id/view2"-->
-        <!--app:layout_constraintTop_toBottomOf="@+id/uploadedImage"-->
-        <!--app:srcCompat="@drawable/ic_share_black_24dp" />-->
-
-    <!---->
-
-    <!--<android.support.constraint.Guideline-->
-        <!--android:id="@+id/guideline4"-->
-        <!--android:layout_width="wrap_content"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:orientation="vertical"-->
-        <!--app:layout_constraintGuide_percent="0.5" />-->
+    <ImageView
+        android:id="@+id/uploadedImage"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="@android:color/transparent"
+        android:scaleType="fitCenter"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <ProgressBar
         android:id="@+id/imageLoadProgress"
@@ -109,4 +65,5 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/ic_favorite_yellow_36dp" />
+
 </android.support.constraint.ConstraintLayout>

@@ -20,69 +20,26 @@
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:layout_marginBottom="2dp"
-            android:layout_marginEnd="4dp"
-            android:layout_marginStart="4dp"
-            android:layout_marginTop="8dp"
+            android:layout_marginEnd="2dp"
+            android:layout_marginStart="2dp"
+            android:layout_marginTop="2dp"
             android:divider="@android:color/transparent"
             android:dividerHeight="10.0sp"
             android:stackFromBottom="true"
             android:transcriptMode="alwaysScroll"
-            app:layout_constraintBottom_toTopOf="@+id/editText"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
-
-        <EditText
-            android:id="@+id/editText"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="2dp"
-            android:layout_marginEnd="4dp"
-            android:layout_marginStart="4dp"
-            android:ems="10"
-            android:hint="Text"
-            android:inputType="text"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/uploadImage"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/recyvclerView" />
-
-        <Button
-            android:id="@+id/sendButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="2dp"
-            android:layout_marginEnd="8dp"
-            android:text="Send"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
-
-        <ImageButton
-            android:id="@+id/uploadImage"
-            android:layout_width="36dp"
-            android:layout_height="36dp"
-            android:layout_marginBottom="2dp"
-            android:layout_marginEnd="4dp"
-            android:layout_marginTop="2dp"
-            android:background="@android:color/transparent"
-            android:scaleType="centerCrop"
-            app:layout_constraintBottom_toBottomOf="@+id/sendButton"
-            app:layout_constraintEnd_toStartOf="@+id/sendButton"
-            app:layout_constraintTop_toTopOf="@+id/sendButton"
-            app:srcCompat="@android:drawable/ic_menu_upload" />
 
         <ProgressBar
             android:id="@+id/progressBar"
             style="?android:attr/progressBarStyle"
             android:layout_width="wrap_content"
             android:layout_height="0dp"
-            android:layout_marginEnd="2dp"
-            android:layout_marginStart="2dp"
             android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="@+id/editText"
-            app:layout_constraintStart_toStartOf="@+id/editText"
-            app:layout_constraintTop_toTopOf="@+id/editText" />
+            tools:layout_editor_absoluteX="124dp" />
 
         <ProgressBar
             android:id="@+id/listviewLoadProgress"
@@ -96,17 +53,6 @@
             app:layout_constraintBottom_toBottomOf="@+id/recyvclerView"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
-
-        <Button
-            android:id="@+id/progressButton"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:background="@android:color/transparent"
-            android:visibility="gone"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/recyvclerView" />
 
 
     </android.support.constraint.ConstraintLayout>

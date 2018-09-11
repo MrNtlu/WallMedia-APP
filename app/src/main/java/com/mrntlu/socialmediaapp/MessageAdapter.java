@@ -12,8 +12,10 @@ import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -40,6 +42,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
+import com.joaquimley.faboptions.FabOptions;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -50,6 +53,7 @@ import java.io.FileOutputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Random;
 
 import es.dmoral.toasty.Toasty;
 
@@ -57,14 +61,12 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
 
     private Activity activity;
     private DatabaseReference databaseReference;
-    private DatabaseReference profilePicDatabase;
     private String displayName;
     private ArrayList<DataSnapshot> dataSnapshots;
-    PublicMessage message;
+    FavoritesMessage message;
 
     Dialog customDialog;
     ProgressBar progressBar;
-    String category;
 
     /*TODO
     https://wall.alphacoders.com/api.php#collapse_collection
@@ -107,12 +109,10 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
         }
     };
 
-    public MessageAdapter(Activity activity,String category, DatabaseReference ref, String displayName, ProgressBar progressBar) {
+    public MessageAdapter(Activity activity, DatabaseReference ref, String displayName, ProgressBar progressBar) {
         this.activity = activity;
-        this.category=category;
         this.displayName = displayName;
-        this.databaseReference = ref.child("messages").child(category);
-        this.profilePicDatabase=ref.child("profile");
+        this.databaseReference = ref.child(displayName);
         this.progressBar=progressBar;
         dataSnapshots=new ArrayList<>();
         this.databaseReference.addChildEventListener(listener);
@@ -121,7 +121,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View v= LayoutInflater.from(activity).inflate(R.layout.cardview_images,parent,false);
+        View v= LayoutInflater.from(activity).inflate(R.layout.categories_custom,parent,false);
         ViewHolder viewHolder=new ViewHolder(v);
         return viewHolder;
     }
@@ -129,15 +129,13 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
     @Override
     public void onBindViewHolder(@NonNull final ViewHolder holder, final int position) {
         DataSnapshot snapshot=dataSnapshots.get(position);
-        message=snapshot.getValue(PublicMessage.class);
-
-        String author=message.getAuthor();
-        holder.authorName.setText(author);
+        message=snapshot.getValue(FavoritesMessage.class);
 
         RequestOptions requestOptions=new RequestOptions();
         requestOptions.error(R.drawable.ic_sync_problem_black_24dp).centerInside();
 
-        Uri uri=Uri.parse(message.getImageUrl());
+        Uri uri=Uri.parse(message.getImageURL());
+
         holder.uploadedImageProgressBar.setVisibility(View.VISIBLE);
         Glide.with(activity).setDefaultRequestOptions(requestOptions).load(uri).listener(new RequestListener<Drawable>() {
             @Override
@@ -154,45 +152,11 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
         }).into(holder.uploadedImage);
         progressBar.setVisibility(View.GONE);
 
-        final DatabaseReference authorDatabase=profilePicDatabase.child(author);
-        authorDatabase.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                holder.profileLogoProgress.setVisibility(View.VISIBLE);
-
-                RequestOptions ro=new RequestOptions();
-                ro.error(R.drawable.ic_sync_problem_black_24dp).centerInside();
-
-                try {
-                    Glide.with(activity).setDefaultRequestOptions(ro).load(dataSnapshot.getValue(Upload.class).getImageUrl()).listener(new RequestListener<Drawable>() {
-                        @Override
-                        public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
-                            holder.profileLogoProgress.setVisibility(View.GONE);
-                            return false;
-                        }
-
-                        @Override
-                        public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
-                            holder.profileLogoProgress.setVisibility(View.GONE);
-                            return false;
-                        }
-                    }).into(holder.profileLogo);
-                }catch(Exception e){
-                    e.printStackTrace();
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
-
         holder.cardviewLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 customDialog=new Dialog(view.getContext(),android.R.style.Theme_Black_NoTitleBar);
-                showPopup(view,dataSnapshots.get(position).getValue(PublicMessage.class).getImageUrl());
+                showPopup(view,dataSnapshots.get(position).getValue(FavoritesMessage.class).getImageURL(),position);
             }
         });
     }
@@ -233,36 +197,91 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
         }
     }
 
-    void showPopup(View v, final String imageURL){
-        ImageButton backButton,downloadButton,shareButton;
+    void showPopup(View v, final String imageURL, final int position){
         ImageView uploadedImage;
         customDialog.setContentView(R.layout.image_dialog);
-        //backButton=(ImageButton)customDialog.findViewById(R.id.backButton);
         uploadedImage=(ImageView)customDialog.findViewById(R.id.uploadedImage);
-//        downloadButton=(ImageButton)customDialog.findViewById(R.id.downloadButton);
-//        shareButton=(ImageButton)customDialog.findViewById(R.id.shareButton);
+        final ProgressBar imageLoadProgress=(ProgressBar)customDialog.findViewById(R.id.imageLoadProgress);
         final ImageView finalUploaded=uploadedImage;
-//        downloadButton.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                saveImage(finalUploaded.getDrawable(),"Wallpaper.png");
-//            }
-//        });
-//
-//        shareButton.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                shareDrawable(activity,imageURL,"filename");
-//            }
-//        });
 
-//        backButton.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                customDialog.dismiss();
-//            }
-//        });
-        Glide.with(v.getContext()).load(imageURL).into(uploadedImage);
+        final FabOptions fabOptions=(FabOptions)customDialog.findViewById(R.id.fab_options);
+        fabOptions.setButtonsMenu(R.menu.fav_fab_menu);
+        fabOptions.setBackgroundColor(activity, ContextCompat.getColor(activity,R.color.colorAccent));
+        fabOptions.setFabColor(R.color.colorAccent);
+
+        fabOptions.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                switch (view.getId()) {
+                    case R.id.faboptions_favorite:
+                        databaseReference.orderByChild("imageURL").equalTo(imageURL).addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                if (dataSnapshot.exists()){
+                                    for (DataSnapshot child: dataSnapshot.getChildren()) {
+                                        child.getRef().removeValue();
+                                    }
+                                    dataSnapshots.remove(position);
+                                    notifyDataSetChanged();
+                                    Toasty.success(activity,"Successfully removed from favs.",Toast.LENGTH_SHORT).show();
+                                }else{
+                                    Toasty.error(activity,"Its already removed from favs :(",Toast.LENGTH_SHORT).show();
+                                }
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                            }
+                        });
+
+                        break;
+
+                    case R.id.faboptions_back:
+                        customDialog.dismiss();
+                        break;
+                    case R.id.faboptions_download:
+                        String[] splittedURL;
+                        String ID;
+                        String imageSaveName;
+                        try{
+                            splittedURL=imageURL.toString().split("/");
+                            ID=splittedURL[splittedURL.length-1];
+                            imageSaveName=ID.substring(0,ID.length()-3)+"jpg";
+                        }catch (Exception e){
+                            Random rand = new Random();
+                            int  n = rand.nextInt(100) + 1;
+                            e.printStackTrace();
+                            imageSaveName="MyWallpaper"+n+".jpg";
+                        }
+                        Log.d("test", "onClick: "+imageSaveName);
+                        saveImage(finalUploaded.getDrawable(),imageSaveName);
+                        break;
+
+                    case R.id.faboptions_share:
+                        shareDrawable(activity,imageURL);
+                        break;
+
+                    default:
+                        // no-op
+                }
+            }
+        });
+
+        imageLoadProgress.setVisibility(View.VISIBLE);
+        Glide.with(v.getContext()).load(imageURL).listener(new RequestListener<Drawable>() {
+            @Override
+            public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
+                imageLoadProgress.setVisibility(View.GONE);
+                return false;
+            }
+
+            @Override
+            public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
+                imageLoadProgress.setVisibility(View.GONE);
+                return false;
+            }
+        }).into(uploadedImage);
         customDialog.show();
     }
 
@@ -270,7 +289,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
         databaseReference.removeEventListener(listener);
     }
 
-    public void shareDrawable(Context context,String imageURL,String fileName) {
+    public void shareDrawable(Context context,String imageURL) {
         try {
             Intent i = new Intent(Intent.ACTION_SEND);
             i.setType("text/plain");
@@ -285,20 +304,15 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder{
-        TextView authorName;
         ImageView uploadedImage;
-        ImageView profileLogo;
         CardView cardviewLayout;
-        ProgressBar uploadedImageProgressBar,profileLogoProgress;
+        ProgressBar uploadedImageProgressBar;
 
         public ViewHolder(View itemView) {
             super(itemView);
-            //authorName=(TextView)itemView.findViewById(R.id.authorText);
             uploadedImage=(ImageView)itemView.findViewById(R.id.uploadedImage);
-            //profileLogo=(ImageView)itemView.findViewById(R.id.profileLogo);
             cardviewLayout=(CardView)itemView.findViewById(R.id.cardview_layout);
             uploadedImageProgressBar=(ProgressBar)itemView.findViewById(R.id.uploadedImageProgressBar);
-            //profileLogoProgress=(ProgressBar)itemView.findViewById(R.id.profileLogoProgress);
         }
     }
 

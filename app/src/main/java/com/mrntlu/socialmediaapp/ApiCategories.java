@@ -24,7 +24,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 
 
 public class ApiCategories extends Fragment {
@@ -37,7 +36,7 @@ public class ApiCategories extends Fragment {
     View v;
     XRecyclerView listView;
     ProgressBar listviewLoadProgress;
-    CategoriesAdapter categoriesAdapter;
+    ApiCategoriesAdapter apiCategoriesAdapter;
     Activity activity;
     int category;
     int page;
@@ -73,11 +72,11 @@ public class ApiCategories extends Fragment {
         super.onStart();
         listviewLoadProgress.setVisibility(View.VISIBLE);
         page=1;
-        categoriesAdapter = new CategoriesAdapter(getActivity(),thumbLinks,imageLinks,listviewLoadProgress,imageID);
+        apiCategoriesAdapter = new ApiCategoriesAdapter(getActivity(),thumbLinks,imageLinks,listviewLoadProgress,imageID);
 
         final GridLayoutManager gridLayoutManager=new GridLayoutManager(activity,2);
         listView.setLayoutManager(gridLayoutManager);
-        listView.setAdapter(categoriesAdapter);
+        listView.setAdapter(apiCategoriesAdapter);
         mQueue = Volley.newRequestQueue(activity);
         jsonParser(category,1);
         listView.setPullRefreshEnabled(false);
@@ -116,7 +115,7 @@ public class ApiCategories extends Fragment {
                                     imageLinks.add(Uri.parse(jsonArray.getJSONObject(i).getString("url_image")));
                                     imageID.add(jsonArray.getJSONObject(i).getInt("id"));
                                 }
-                                categoriesAdapter.notifyDataSetChanged();
+                                apiCategoriesAdapter.notifyDataSetChanged();
                             }
                         } catch (JSONException e) {
                             e.printStackTrace();

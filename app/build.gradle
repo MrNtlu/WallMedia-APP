@@ -39,6 +39,7 @@ dependencies {
     implementation 'com.jcodecraeer:xrecyclerview:1.5.9'
     implementation 'com.github.jrvansuita:MaterialAbout:+'
     implementation 'com.github.joaquimley:faboptions:1.2.0'
+    implementation 'com.github.jgabrielfreitas:BlurImageView:1.0.1'
 
     implementation 'com.android.volley:volley:1.1.1'
     implementation 'com.android.support:recyclerview-v7:27.1.1'

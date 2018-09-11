@@ -63,7 +63,7 @@ public class MainPage extends AppCompatActivity{
                             fragment=new MainFragment(MainPage.this);
                             break;
                         case R.id.socialmedia_list:
-                            fragment=new Categories(MainPage.this,"Abstract");
+                            fragment=new Categories(MainPage.this);
                             break;
                         case R.id.abstract_list:
                             fragment=new ApiCategories(MainPage.this,1);

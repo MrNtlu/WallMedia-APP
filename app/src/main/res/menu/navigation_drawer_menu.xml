@@ -9,9 +9,9 @@
             android:icon="@drawable/ic_home_black_24dp"
             android:id="@+id/mainpage_list"/>
         <item
-            android:title="SocialMedia"
+            android:title="Favorites"
             app:showAsAction="always"
-            android:icon="@drawable/ic_share_black_24dp"
+            android:icon="@drawable/ic_favorite_black_24dp"
             android:id="@+id/socialmedia_list"/>
 
     </group>
@@ -42,10 +42,6 @@
                 android:title="Dark"
                 app:showAsAction="always"
                 android:id="@+id/dark_list"/>
-            <item
-                android:title="Earth"
-                app:showAsAction="always"
-                android:id="@+id/earth_list"/>
             <item
                 android:title="Fantasy"
                 app:showAsAction="always"
@@ -82,6 +78,10 @@
                 android:title="Music"
                 app:showAsAction="always"
                 android:id="@+id/Music_list"/>
+            <item
+                android:title="Nature"
+                app:showAsAction="always"
+                android:id="@+id/earth_list"/>
             <item
                 android:title="Photography"
                 app:showAsAction="always"

@@ -34,6 +34,7 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.StorageTask;
 import com.google.firebase.storage.UploadTask;
+import com.jcodecraeer.xrecyclerview.XRecyclerView;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -49,19 +50,15 @@ public class Categories extends Fragment {
     private DatabaseReference databaseReference;
     private MessageAdapter messageAdapter;
     private Uri imageUri;
-    private StorageReference storageReference;
 
     Activity activity;
-    String category;
 
     String miUrlOk;
     StorageTask uploadTask;
 
-    RecyclerView listView;
-    EditText editText;
-    Button sendButton,progressButton;
-    ImageButton backButton, uploadImage;
-    ProgressBar progressBar,listviewLoadProgress;
+    XRecyclerView listView;
+    ImageButton uploadImage;
+    ProgressBar listviewLoadProgress;
     String userid;
 
     public Categories() {
@@ -69,9 +66,8 @@ public class Categories extends Fragment {
     }
 
     @SuppressLint("ValidFragment")
-    public Categories(Activity activity, String category) {
+    public Categories(Activity activity) {
         this.activity = activity;
-        this.category = category;
     }
 
     @Override
@@ -82,92 +78,76 @@ public class Categories extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        v=inflater.inflate(R.layout.fragment_categories,container,false);
-        listView = (RecyclerView) v.findViewById(R.id.recyvclerView);
-        editText = (EditText) v.findViewById(R.id.editText);
-        sendButton = (Button) v.findViewById(R.id.sendButton);
-        backButton = (ImageButton) v.findViewById(R.id.backButton);
-        uploadImage = (ImageButton)v.findViewById(R.id.uploadImage);
-        progressBar=(ProgressBar)v.findViewById(R.id.progressBar);
-        progressButton=(Button)v.findViewById(R.id.progressButton);
-
+        v=inflater.inflate(R.layout.fragment_api_categories,container,false);
+        listView = (XRecyclerView) v.findViewById(R.id.recyvclerView);
         listviewLoadProgress=(ProgressBar)v.findViewById(R.id.listviewLoadProgress);
-
-        storageReference = FirebaseStorage.getInstance().getReference("uploads").child(category);
-
 
         databaseReference = FirebaseDatabase.getInstance().getReference();
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-
+        listView.setPullRefreshEnabled(false);
+        listView.loadMoreComplete();
         userid = user.getDisplayName();
-
-        uploadImage.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                openFileChooser();
-            }
-        });
-
-        sendButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                final String message = editText.getText().toString();
-
-                if (imageUri != null && !message.equals("")) {
-                    editText.setText("");
-                    progressBar.setVisibility(View.VISIBLE);
-                    progressButton.setVisibility(View.VISIBLE);
-
-                    final StorageReference fileReference = storageReference.child(System.currentTimeMillis()
-                            + "." + getFileExtension(imageUri));
-
-                    uploadTask = fileReference.putFile(imageUri);
-
-                    uploadTask.continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
-                        @Override
-                        public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {
-                            if (!task.isSuccessful()) {
-                                throw task.getException();
-                            }
-                            return fileReference.getDownloadUrl();
-                        }
-                    }).addOnCompleteListener(new OnCompleteListener<Uri>() {
-                        @Override
-                        public void onComplete(@NonNull Task<Uri> task) {
-                            if (task.isSuccessful()) {
-                                if (userid == null) userid = "Anonymous";
-
-                                Uri downloadUri = task.getResult();
-                                miUrlOk = downloadUri.toString();
-                                PublicMessage publicMessage = new PublicMessage(message, userid, miUrlOk);
-
-                                databaseReference.child("messages").child(category).push().setValue(publicMessage);
-
-                                scrollMyListViewToBottom();
-                                imageUri = Uri.parse("");
-                                uploadImage.setImageDrawable(getResources().getDrawable(android.R.drawable.ic_menu_upload));
-                                progressBar.setVisibility(View.GONE);
-                                progressButton.setVisibility(View.GONE);
-                            }else{
-                                progressButton.setVisibility(View.GONE);
-                            }
-                        }
-                    }).addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            Toasty.error(v.getContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
-                            imageUri = Uri.parse("");
-                            uploadImage.setImageDrawable(getResources().getDrawable(android.R.drawable.ic_menu_upload));
-                            progressBar.setVisibility(View.GONE);
-                            progressButton.setVisibility(View.GONE);
-                        }
-                    });
-                } else {
-                    Toasty.error(v.getContext(), "No file selected", Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
         return v;
+
+//        sendButton.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                final String message = editText.getText().toString();
+//
+//                if (imageUri != null && !message.equals("")) {
+//                    editText.setText("");
+//                    progressBar.setVisibility(View.VISIBLE);
+//                    progressButton.setVisibility(View.VISIBLE);
+//
+//                    final StorageReference fileReference = storageReference.child(System.currentTimeMillis()
+//                            + "." + getFileExtension(imageUri));
+//
+//                    uploadTask = fileReference.putFile(imageUri);
+//
+//                    uploadTask.continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
+//                        @Override
+//                        public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {
+//                            if (!task.isSuccessful()) {
+//                                throw task.getException();
+//                            }
+//                            return fileReference.getDownloadUrl();
+//                        }
+//                    }).addOnCompleteListener(new OnCompleteListener<Uri>() {
+//                        @Override
+//                        public void onComplete(@NonNull Task<Uri> task) {
+//                            if (task.isSuccessful()) {
+//                                if (userid == null) userid = "Anonymous";
+//
+//                                Uri downloadUri = task.getResult();
+//                                miUrlOk = downloadUri.toString();
+//                                PublicMessage publicMessage = new PublicMessage(message, userid, miUrlOk);
+//
+//                                databaseReference.child("messages").child(category).push().setValue(publicMessage);
+//
+//                                scrollMyListViewToBottom();
+//                                imageUri = Uri.parse("");
+//                                uploadImage.setImageDrawable(getResources().getDrawable(android.R.drawable.ic_menu_upload));
+//                                progressBar.setVisibility(View.GONE);
+//                                progressButton.setVisibility(View.GONE);
+//                            }else{
+//                                progressButton.setVisibility(View.GONE);
+//                            }
+//                        }
+//                    }).addOnFailureListener(new OnFailureListener() {
+//                        @Override
+//                        public void onFailure(@NonNull Exception e) {
+//                            Toasty.error(v.getContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
+//                            imageUri = Uri.parse("");
+//                            uploadImage.setImageDrawable(getResources().getDrawable(android.R.drawable.ic_menu_upload));
+//                            progressBar.setVisibility(View.GONE);
+//                            progressButton.setVisibility(View.GONE);
+//                        }
+//                    });
+//                } else {
+//                    Toasty.error(v.getContext(), "No file selected", Toast.LENGTH_SHORT).show();
+//                }
+//            }
+//        });
     }
 
 
@@ -185,8 +165,6 @@ public class Categories extends Fragment {
             }
         });
     }
-
-
 
     private void openFileChooser() {
         Intent intent = new Intent();
@@ -215,7 +193,7 @@ public class Categories extends Fragment {
         super.onStart();
         listviewLoadProgress.setVisibility(View.VISIBLE);
 
-        messageAdapter = new MessageAdapter(getActivity(),category, databaseReference, userid,listviewLoadProgress);
+        messageAdapter = new MessageAdapter(getActivity(), databaseReference, userid,listviewLoadProgress);
 
         final GridLayoutManager gridLayoutManager=new GridLayoutManager(activity,2);
         listView.setLayoutManager(gridLayoutManager);

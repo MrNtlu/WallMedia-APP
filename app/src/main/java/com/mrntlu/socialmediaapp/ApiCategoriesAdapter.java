@@ -2,7 +2,6 @@ package com.mrntlu.socialmediaapp;
 
 import android.app.Activity;
 import android.app.Dialog;
-import android.app.WallpaperManager;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -12,46 +11,40 @@ import android.net.Uri;
 import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.constraint.ConstraintLayout;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
-
-import com.android.volley.RequestQueue;
-import com.android.volley.toolbox.Volley;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.DataSource;
 import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.RequestOptions;
+import com.bumptech.glide.request.target.SimpleTarget;
 import com.bumptech.glide.request.target.Target;
+import com.bumptech.glide.request.transition.Transition;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
+import com.jgabrielfreitas.core.BlurImageView;
 import com.joaquimley.faboptions.FabOptions;
-
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
 
 import es.dmoral.toasty.Toasty;
 
-public class CategoriesAdapter extends RecyclerView.Adapter<CategoriesAdapter.ViewHolder>{
+public class ApiCategoriesAdapter extends RecyclerView.Adapter<ApiCategoriesAdapter.ViewHolder>{
 
     private Activity activity;
     Dialog customDialog;
@@ -66,8 +59,9 @@ public class CategoriesAdapter extends RecyclerView.Adapter<CategoriesAdapter.Vi
 
     //TODO https://stackoverflow.com/questions/43959582/how-to-check-if-a-value-exists-in-firebase-database-android
     //android firebase check if data exists
+    //https://github.com/JoaquimLey/faboptions
 
-    public CategoriesAdapter(Activity activity, ArrayList<Uri> thumbLinks, ArrayList<Uri> imageLinks,ProgressBar progressBar,ArrayList<Integer> imageID) {
+    public ApiCategoriesAdapter(Activity activity, ArrayList<Uri> thumbLinks, ArrayList<Uri> imageLinks, ProgressBar progressBar, ArrayList<Integer> imageID) {
         this.activity = activity;
         this.thumbLinks = thumbLinks;
         this.imageLinks = imageLinks;
@@ -112,7 +106,7 @@ public class CategoriesAdapter extends RecyclerView.Adapter<CategoriesAdapter.Vi
             @Override
             public void onClick(View view) {
                 customDialog=new Dialog(view.getContext(),android.R.style.Theme_Black_NoTitleBar);
-                showPopup(view,imageLinks.get(position).toString(),imageID.get(position));
+                showPopup(view,imageLinks.get(position).toString(),imageID.get(position),thumbLinks.get(position).toString());
             }
         });
     }
@@ -164,13 +158,14 @@ public class CategoriesAdapter extends RecyclerView.Adapter<CategoriesAdapter.Vi
         }
     }
 
-    void showPopup(View v, final String imageURL, final int id){
-        ImageButton backButton,downloadButton,shareButton;
+    void showPopup(View v, final String imageURL, final int id,final String thumbURL){
         customDialog.setContentView(R.layout.image_dialog);
-        ImageView uploadedImage=(ImageView)customDialog.findViewById(R.id.uploadedImage);
+        final ImageView uploadedImage=(ImageView)customDialog.findViewById(R.id.uploadedImage);
         final ProgressBar imageLoadProgress=(ProgressBar)customDialog.findViewById(R.id.imageLoadProgress);
         final ImageView finalUploaded=uploadedImage;
         final ImageView starImage=(ImageView)customDialog.findViewById(R.id.starImage);
+        final ConstraintLayout constraintLayout=(ConstraintLayout)customDialog.findViewById(R.id.dialog_layout);
+        final BlurImageView backgroundImage=(BlurImageView)customDialog.findViewById(R.id.backgroundImage);
 
         final FabOptions fabOptions=(FabOptions)customDialog.findViewById(R.id.fab_options);
         fabOptions.setButtonsMenu(R.menu.fab_menu);
@@ -186,7 +181,9 @@ public class CategoriesAdapter extends RecyclerView.Adapter<CategoriesAdapter.Vi
                             @Override
                             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                                 if (dataSnapshot.exists()){
-                                    removeFromFirebase(displayName,imageURL);
+                                    for (DataSnapshot child: dataSnapshot.getChildren()) {
+                                        child.getRef().removeValue();
+                                    }
                                     starImage.setVisibility(View.GONE);
                                 }else{
                                     FavoritesMessage favoritesMessage=new FavoritesMessage(imageURL);
@@ -235,21 +232,27 @@ public class CategoriesAdapter extends RecyclerView.Adapter<CategoriesAdapter.Vi
         });
 
         imageLoadProgress.setVisibility(View.VISIBLE);
+
         Glide.with(v.getContext()).load(imageURL).listener(new RequestListener<Drawable>() {
             @Override
             public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
                 imageLoadProgress.setVisibility(View.GONE);
+                Toasty.error(activity,"Failed to load. Please try again :(",Toast.LENGTH_SHORT).show();
                 return false;
             }
-
             @Override
             public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
                 imageLoadProgress.setVisibility(View.GONE);
+                backgroundImage.setImageDrawable(resource);
+                backgroundImage.setBlur(10);
+
                 return false;
             }
         }).into(uploadedImage);
 
         customDialog.show();
+
+
     }
 
     void removeFromFirebase(String displayName,String URL){

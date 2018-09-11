@@ -34,7 +34,7 @@ public class MainScreenFragments extends Fragment {
     View v;
     XRecyclerView listView;
     ProgressBar listviewLoadProgress;
-    CategoriesAdapter categoriesAdapter;
+    ApiCategoriesAdapter apiCategoriesAdapter;
     Activity activity;
     int page;
     String method;
@@ -66,11 +66,11 @@ public class MainScreenFragments extends Fragment {
         super.onStart();
         listviewLoadProgress.setVisibility(View.VISIBLE);
         page=1;
-        categoriesAdapter = new CategoriesAdapter(getActivity(),thumbLinks,imageLinks,listviewLoadProgress,imageID);
+        apiCategoriesAdapter = new ApiCategoriesAdapter(getActivity(),thumbLinks,imageLinks,listviewLoadProgress,imageID);
 
         final GridLayoutManager gridLayoutManager=new GridLayoutManager(activity,2);
         listView.setLayoutManager(gridLayoutManager);
-        listView.setAdapter(categoriesAdapter);
+        listView.setAdapter(apiCategoriesAdapter);
         mQueue = Volley.newRequestQueue(activity);
         jsonParser(1);
         listView.setPullRefreshEnabled(false);
@@ -107,7 +107,7 @@ public class MainScreenFragments extends Fragment {
                                     imageLinks.add(Uri.parse(jsonArray.getJSONObject(i).getString("url_image")));
                                     imageID.add(jsonArray.getJSONObject(i).getInt("id"));
                                 }
-                                categoriesAdapter.notifyDataSetChanged();
+                                apiCategoriesAdapter.notifyDataSetChanged();
                             }
                         } catch (JSONException e) {
                             e.printStackTrace();
