@@ -42,6 +42,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
+import com.jgabrielfreitas.core.BlurImageView;
 import com.joaquimley.faboptions.FabOptions;
 
 import org.json.JSONArray;
@@ -114,6 +115,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
         this.displayName = displayName;
         this.databaseReference = ref.child(displayName);
         this.progressBar=progressBar;
+        progressBar.setVisibility(View.GONE);
         dataSnapshots=new ArrayList<>();
         this.databaseReference.addChildEventListener(listener);
     }
@@ -159,6 +161,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
                 showPopup(view,dataSnapshots.get(position).getValue(FavoritesMessage.class).getImageURL(),position);
             }
         });
+
     }
 
     @Override
@@ -172,8 +175,6 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
     }
 
     void saveImage(Drawable drawable,String imageName){
-        Toasty.info(activity, "Started to Save", Toast.LENGTH_SHORT).show();
-
         Bitmap image=((BitmapDrawable) drawable).getBitmap();
 
         File path= Environment.getExternalStorageDirectory();
@@ -189,11 +190,11 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
             image.compress(Bitmap.CompressFormat.PNG,100,out);
             out.flush();
             out.close();
-            Toasty.success(activity, "Saved", Toast.LENGTH_SHORT).show();
+            Toasty.success(activity,activity.getString(R.string.waittoload), Toast.LENGTH_SHORT).show();
         }
         catch (Exception e){
             e.printStackTrace();
-            Toasty.error(activity, "Error! " + e.getMessage(), Toast.LENGTH_LONG).show();
+            Toasty.error(activity, activity.getString(R.string.error_occured)+" "+ e.getMessage(), Toast.LENGTH_LONG).show();
         }
     }
 
@@ -203,7 +204,8 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
         uploadedImage=(ImageView)customDialog.findViewById(R.id.uploadedImage);
         final ProgressBar imageLoadProgress=(ProgressBar)customDialog.findViewById(R.id.imageLoadProgress);
         final ImageView finalUploaded=uploadedImage;
-
+        final ConstraintLayout constraintLayout=(ConstraintLayout)customDialog.findViewById(R.id.dialog_layout);
+        final BlurImageView backgroundImage=(BlurImageView)customDialog.findViewById(R.id.backgroundImage);
         final FabOptions fabOptions=(FabOptions)customDialog.findViewById(R.id.fab_options);
         fabOptions.setButtonsMenu(R.menu.fav_fab_menu);
         fabOptions.setBackgroundColor(activity, ContextCompat.getColor(activity,R.color.colorAccent));
@@ -223,9 +225,9 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
                                     }
                                     dataSnapshots.remove(position);
                                     notifyDataSetChanged();
-                                    Toasty.success(activity,"Successfully removed from favs.",Toast.LENGTH_SHORT).show();
+                                    Toasty.success(activity,activity.getString(R.string.succ_removed),Toast.LENGTH_SHORT).show();
                                 }else{
-                                    Toasty.error(activity,"Its already removed from favs :(",Toast.LENGTH_SHORT).show();
+                                    Toasty.error(activity,activity.getString(R.string.alread_removed),Toast.LENGTH_SHORT).show();
                                 }
                             }
 
@@ -254,7 +256,6 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
                             e.printStackTrace();
                             imageSaveName="MyWallpaper"+n+".jpg";
                         }
-                        Log.d("test", "onClick: "+imageSaveName);
                         saveImage(finalUploaded.getDrawable(),imageSaveName);
                         break;
 
@@ -273,12 +274,15 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
             @Override
             public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
                 imageLoadProgress.setVisibility(View.GONE);
+                Toasty.error(activity,activity.getString(R.string.failed_to_load),Toast.LENGTH_SHORT).show();
                 return false;
             }
 
             @Override
             public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
                 imageLoadProgress.setVisibility(View.GONE);
+                backgroundImage.setImageDrawable(resource);
+                backgroundImage.setBlur(10);
                 return false;
             }
         }).into(uploadedImage);

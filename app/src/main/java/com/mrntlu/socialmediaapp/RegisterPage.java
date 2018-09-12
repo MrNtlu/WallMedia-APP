@@ -126,7 +126,7 @@ public class RegisterPage extends AppCompatActivity {
                         }
                     });
                 } else {
-                    Toast.makeText(RegisterPage.this, "Email geçersiz veya Şifre kısa.", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(RegisterPage.this, R.string.please_check_mailpass, Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -175,13 +175,13 @@ public class RegisterPage extends AppCompatActivity {
                     task.addOnFailureListener(new OnFailureListener() {
                         @Override
                         public void onFailure(@NonNull Exception e) {
-                            Toasty.error(RegisterPage.this, "Failed! "+e.getMessage(), Toast.LENGTH_SHORT).show();
+                            Toasty.error(RegisterPage.this, getString(R.string.failed_)+" "+e.getMessage(), Toast.LENGTH_SHORT).show();
                             e.printStackTrace();
                         }
                     });
                 }
                 if (task.isSuccessful()) {
-                    Toasty.success(RegisterPage.this, "Success", Toast.LENGTH_SHORT).show();
+                    Toasty.success(RegisterPage.this, getString(R.string.success), Toast.LENGTH_SHORT).show();
                     startActivity(new Intent(RegisterPage.this, MainActivity.class));
                 }
             }

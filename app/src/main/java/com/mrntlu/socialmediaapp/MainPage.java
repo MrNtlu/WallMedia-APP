@@ -19,6 +19,7 @@ import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.google.firebase.auth.FirebaseAuth;
+
 import es.dmoral.toasty.Toasty;
 
 public class MainPage extends AppCompatActivity{

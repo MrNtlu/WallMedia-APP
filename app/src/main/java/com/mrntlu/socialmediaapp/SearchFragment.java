@@ -10,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
+import android.widget.SearchView;
 import android.widget.Toast;
 
 import com.android.volley.Request;
@@ -105,7 +106,7 @@ public class SearchFragment extends Fragment {
                             if (response.getBoolean("success")) {
                                 pageLimit=response.getInt("total_match");
                                 if (pageLimit<=0){
-                                    Toasty.error(activity,"No Image Found", Toast.LENGTH_LONG).show();
+                                    Toasty.error(activity,getString(R.string.no_image_found), Toast.LENGTH_LONG).show();
                                     listviewLoadProgress.setVisibility(View.GONE);
                                 }
                                 JSONArray jsonArray = response.getJSONArray("wallpapers");
@@ -118,7 +119,7 @@ public class SearchFragment extends Fragment {
                             }
                         } catch (JSONException e) {
                             e.printStackTrace();
-                            Toasty.error(activity,"Error Occurred!",Toast.LENGTH_SHORT).show();
+                            Toasty.error(activity,getString(R.string.error_occured_2),Toast.LENGTH_SHORT).show();
                         }
                     }
                 }, new Response.ErrorListener() {

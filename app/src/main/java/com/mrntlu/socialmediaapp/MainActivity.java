@@ -1,6 +1,7 @@
 package com.mrntlu.socialmediaapp;
 
 import android.Manifest;
+import android.app.Dialog;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
@@ -12,6 +13,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
@@ -39,6 +41,7 @@ public class MainActivity extends AppCompatActivity {
     private EditText emailText,passwordText;
     private ProgressBar loginProgress;
     private SignInButton signInButton;
+    ImageButton infoButton;
     FirebaseAuth.AuthStateListener authStateListener;
     private final static int RC_SIGN_IN=1;
     GoogleSignInClient mGoogleSignInClient;
@@ -69,6 +72,23 @@ public class MainActivity extends AppCompatActivity {
         signInButton=(SignInButton)findViewById(R.id.google_signin_btn);
         emailText=(EditText)findViewById(R.id.mailText);
         passwordText=(EditText)findViewById(R.id.passwordText);
+        infoButton=(ImageButton)findViewById(R.id.infoButton);
+
+        infoButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                final Dialog customDialog=new Dialog(MainActivity.this);
+                customDialog.setContentView(R.layout.custom_dialog);
+                Button okButton=(Button)customDialog.findViewById(R.id.okButton);
+                okButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        customDialog.dismiss();
+                    }
+                });
+                customDialog.show();
+            }
+        });
 
         signInButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -83,7 +103,6 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
                 if (firebaseAuth.getCurrentUser()!=null){
-                    Toasty.info(MainActivity.this,firebaseAuth.getCurrentUser().getDisplayName()+"",Toast.LENGTH_SHORT).show();
                     startActivity(new Intent(MainActivity.this,MainPage.class));
                 }
             }
@@ -115,7 +134,7 @@ public class MainActivity extends AppCompatActivity {
         String email=emailText.getText().toString().replaceAll("\\s+","");
         String password=passwordText.getText().toString();
         if (email.equals("") || password.equals("")){
-            Toasty.error(this, "Email ve Password Boş Bırakılamaz.", Toast.LENGTH_SHORT).show();
+            Toasty.error(this, getString(R.string.mail_and_pass_empty), Toast.LENGTH_SHORT).show();
         }
         else{
             loginProgress.setVisibility(View.VISIBLE);
@@ -134,7 +153,7 @@ public class MainActivity extends AppCompatActivity {
                                 e.printStackTrace();
                             }
                         });
-                        showErrorDialog("Lütfen Giriş Bilgilerinizi Kontrol Edin.");
+                        showErrorDialog(getString(R.string.check_credentials));
                     }
                 }
             });

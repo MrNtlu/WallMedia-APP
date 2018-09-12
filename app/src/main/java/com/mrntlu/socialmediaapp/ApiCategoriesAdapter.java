@@ -106,7 +106,7 @@ public class ApiCategoriesAdapter extends RecyclerView.Adapter<ApiCategoriesAdap
             @Override
             public void onClick(View view) {
                 customDialog=new Dialog(view.getContext(),android.R.style.Theme_Black_NoTitleBar);
-                showPopup(view,imageLinks.get(position).toString(),imageID.get(position),thumbLinks.get(position).toString());
+                showPopup(view,imageLinks.get(position).toString(),imageID.get(position));
             }
         });
     }
@@ -119,7 +119,6 @@ public class ApiCategoriesAdapter extends RecyclerView.Adapter<ApiCategoriesAdap
     void saveImage(Drawable drawable, String imageName){
         try {
             Bitmap image=((BitmapDrawable) drawable).getBitmap();
-            Toasty.info(activity, "Started to Save", Toast.LENGTH_SHORT).show();
 
             File path= Environment.getExternalStorageDirectory();
 
@@ -132,14 +131,14 @@ public class ApiCategoriesAdapter extends RecyclerView.Adapter<ApiCategoriesAdap
             image.compress(Bitmap.CompressFormat.PNG,100,out);
             out.flush();
             out.close();
-            Toasty.success(activity, "Saved", Toast.LENGTH_SHORT).show();
+            Toasty.success(activity, activity.getString(R.string.imageSaved), Toast.LENGTH_SHORT).show();
         }
         catch (NullPointerException e){
-            Toasty.error(activity,"Wait for image to load!",Toast.LENGTH_SHORT).show();
+            Toasty.error(activity,activity.getString(R.string.waittoload),Toast.LENGTH_SHORT).show();
         }
         catch (Exception e){
             e.printStackTrace();
-            Toasty.error(activity, "Error! " + e.getMessage(), Toast.LENGTH_LONG).show();
+            Toasty.error(activity, activity.getString(R.string.error_occured)+" "+ e.getMessage(), Toast.LENGTH_LONG).show();
         }
 
     }
@@ -158,7 +157,7 @@ public class ApiCategoriesAdapter extends RecyclerView.Adapter<ApiCategoriesAdap
         }
     }
 
-    void showPopup(View v, final String imageURL, final int id,final String thumbURL){
+    void showPopup(View v, final String imageURL, final int id){
         customDialog.setContentView(R.layout.image_dialog);
         final ImageView uploadedImage=(ImageView)customDialog.findViewById(R.id.uploadedImage);
         final ProgressBar imageLoadProgress=(ProgressBar)customDialog.findViewById(R.id.imageLoadProgress);
@@ -237,7 +236,7 @@ public class ApiCategoriesAdapter extends RecyclerView.Adapter<ApiCategoriesAdap
             @Override
             public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
                 imageLoadProgress.setVisibility(View.GONE);
-                Toasty.error(activity,"Failed to load. Please try again :(",Toast.LENGTH_SHORT).show();
+                Toasty.error(activity,activity.getString(R.string.failed_to_load),Toast.LENGTH_SHORT).show();
                 return false;
             }
             @Override
