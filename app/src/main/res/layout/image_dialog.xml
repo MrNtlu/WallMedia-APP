@@ -55,15 +55,22 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
-    <ImageView
-        android:id="@+id/starImage"
+    <com.like.LikeButton
+        android:id="@+id/heart_Button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="12dp"
-        android:layout_marginTop="12dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginTop="8dp"
         android:visibility="gone"
+        app:anim_scale_factor="2"
+        app:circle_end_color="@color/colorAccent"
+        app:circle_start_color="@color/colorAccent"
+        app:dots_primary_color="@color/colorAccent"
+        app:dots_secondary_color="@color/colorAccent"
+        app:icon_size="36dp"
+        app:icon_type="heart"
+        app:is_enabled="true"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/ic_favorite_yellow_36dp" />
+        app:layout_constraintTop_toTopOf="parent" />
 
 </android.support.constraint.ConstraintLayout>

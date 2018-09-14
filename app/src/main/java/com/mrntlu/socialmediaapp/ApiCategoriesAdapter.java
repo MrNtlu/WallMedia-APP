@@ -26,9 +26,7 @@ import com.bumptech.glide.load.DataSource;
 import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.RequestOptions;
-import com.bumptech.glide.request.target.SimpleTarget;
 import com.bumptech.glide.request.target.Target;
-import com.bumptech.glide.request.transition.Transition;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -37,6 +35,8 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.jgabrielfreitas.core.BlurImageView;
 import com.joaquimley.faboptions.FabOptions;
+import com.like.LikeButton;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
@@ -75,7 +75,7 @@ public class ApiCategoriesAdapter extends RecyclerView.Adapter<ApiCategoriesAdap
         View v= LayoutInflater.from(activity).inflate(R.layout.categories_custom,parent,false);
         ViewHolder viewHolder=new ViewHolder(v);
         databaseReference = FirebaseDatabase.getInstance().getReference();
-        displayName=FirebaseAuth.getInstance().getCurrentUser().getDisplayName();
+        displayName=FirebaseAuth.getInstance().getCurrentUser().getEmail().toString().replace("@","").replace(".","");
         return viewHolder;
     }
 
@@ -162,9 +162,9 @@ public class ApiCategoriesAdapter extends RecyclerView.Adapter<ApiCategoriesAdap
         final ImageView uploadedImage=(ImageView)customDialog.findViewById(R.id.uploadedImage);
         final ProgressBar imageLoadProgress=(ProgressBar)customDialog.findViewById(R.id.imageLoadProgress);
         final ImageView finalUploaded=uploadedImage;
-        final ImageView starImage=(ImageView)customDialog.findViewById(R.id.starImage);
         final ConstraintLayout constraintLayout=(ConstraintLayout)customDialog.findViewById(R.id.dialog_layout);
         final BlurImageView backgroundImage=(BlurImageView)customDialog.findViewById(R.id.backgroundImage);
+        final LikeButton likeButton=(LikeButton)customDialog.findViewById(R.id.heart_Button);
 
         final FabOptions fabOptions=(FabOptions)customDialog.findViewById(R.id.fab_options);
         fabOptions.setButtonsMenu(R.menu.fab_menu);
@@ -183,11 +183,13 @@ public class ApiCategoriesAdapter extends RecyclerView.Adapter<ApiCategoriesAdap
                                     for (DataSnapshot child: dataSnapshot.getChildren()) {
                                         child.getRef().removeValue();
                                     }
-                                    starImage.setVisibility(View.GONE);
+                                    likeButton.setLiked(false);
+                                    likeButton.setVisibility(View.GONE);
                                 }else{
                                     FavoritesMessage favoritesMessage=new FavoritesMessage(imageURL);
                                     databaseReference.child(displayName).push().setValue(favoritesMessage);
-                                    starImage.setVisibility(View.VISIBLE);
+                                    likeButton.setVisibility(View.VISIBLE);
+                                    likeButton.onClick(likeButton);
                                 }
                             }
 
@@ -219,7 +221,12 @@ public class ApiCategoriesAdapter extends RecyclerView.Adapter<ApiCategoriesAdap
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if (dataSnapshot.exists()){
-                    starImage.setVisibility(View.VISIBLE);
+                    if (likeButton.isLiked()){
+                        likeButton.setLiked(false);
+                    }
+                    likeButton.setVisibility(View.VISIBLE);
+                    likeButton.onClick(likeButton);
+
                 }
 
             }

@@ -86,7 +86,7 @@ public class Categories extends Fragment {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         listView.setPullRefreshEnabled(false);
         listView.loadMoreComplete();
-        userid = user.getDisplayName();
+        userid = user.getEmail().toString().replace("@","").replace(".","");
         return v;
 
 //        sendButton.setOnClickListener(new View.OnClickListener() {

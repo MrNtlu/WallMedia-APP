@@ -12,6 +12,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
@@ -38,6 +39,8 @@ public class RegisterPage extends AppCompatActivity {
     ImageButton backButton;
     Button registerButton;
     ImageView uploadImage;
+    View progressView;
+    ProgressBar progressBar;
     private FirebaseAuth firebaseAuth;
     FirebaseAuth.AuthStateListener authStateListener;
 
@@ -57,6 +60,8 @@ public class RegisterPage extends AppCompatActivity {
         confirmPassText = (EditText) findViewById(R.id.confirmPassText);
         nickNameText = (EditText) findViewById(R.id.nickNameText);
         uploadImage = (ImageView) findViewById(R.id.uploadImage);
+        progressBar=(ProgressBar)findViewById(R.id.progressBar_register);
+        progressView=(View)findViewById(R.id.progress_view);
 
         storageReference = FirebaseStorage.getInstance().getReference("profile_pics");
         databaseReference = FirebaseDatabase.getInstance().getReference();
@@ -93,6 +98,9 @@ public class RegisterPage extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 if (emailCheck() && passwordConfirm() && profileImageCheck()) {
+                    progressBar.setVisibility(View.VISIBLE);
+                    progressView.setVisibility(View.VISIBLE);
+                    registerButton.setClickable(false);
                     createFirebaseUser();
                     final StorageReference fileReference = storageReference.child(System.currentTimeMillis()
                             + "." + getFileExtension(imageUri));
@@ -115,13 +123,15 @@ public class RegisterPage extends AppCompatActivity {
                                 String miUrlOk = downloadUri.toString();
 
                                 Upload upload = new Upload(nickNameText.getText().toString(), miUrlOk);
-                                databaseReference.child("profile").child(nickNameText.getText().toString()).setValue(upload);
-
+                                databaseReference.child("profile").child(firebaseAuth.getCurrentUser().getEmail().toString().replace("@","").replace(".","")).setValue(upload);
                             }
                         }
                     }).addOnFailureListener(new OnFailureListener() {
                         @Override
                         public void onFailure(@NonNull Exception e) {
+                            progressBar.setVisibility(View.GONE);
+                            registerButton.setClickable(true);
+                            progressView.setVisibility(View.GONE);
                             Toast.makeText(RegisterPage.this, e.getMessage(), Toast.LENGTH_SHORT).show();
                         }
                     });
@@ -177,6 +187,9 @@ public class RegisterPage extends AppCompatActivity {
                         public void onFailure(@NonNull Exception e) {
                             Toasty.error(RegisterPage.this, getString(R.string.failed_)+" "+e.getMessage(), Toast.LENGTH_SHORT).show();
                             e.printStackTrace();
+                            progressBar.setVisibility(View.GONE);
+                            progressView.setVisibility(View.GONE);
+                            registerButton.setClickable(true);
                         }
                     });
                 }

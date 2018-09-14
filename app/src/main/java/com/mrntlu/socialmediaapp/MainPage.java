@@ -1,10 +1,14 @@
 package com.mrntlu.socialmediaapp;
 
+import android.Manifest;
 import android.content.Intent;
+import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -15,10 +19,18 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.bumptech.glide.Glide;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import es.dmoral.toasty.Toasty;
 
@@ -46,7 +58,26 @@ public class MainPage extends AppCompatActivity{
         drawerLayout=(DrawerLayout)findViewById(R.id.drawer_layout);
         View headerView=navigationView.getHeaderView(0);
         TextView navUsername=(TextView)headerView.findViewById(R.id.username_Text);
-        navUsername.setText(FirebaseAuth.getInstance().getCurrentUser().getDisplayName());
+        final ImageView userImage=(ImageView)headerView.findViewById(R.id.user_image);
+            FirebaseDatabase.getInstance().getReference().child("profile").child(FirebaseAuth.getInstance().getCurrentUser().getEmail().toString().replace("@","").replace(".","")).addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    try {
+                        Glide.with(MainPage.this).load(dataSnapshot.getValue(Upload.class).getImageUrl()).into(userImage);
+                    }catch (Exception e){
+                        userImage.setImageDrawable(ContextCompat.getDrawable(MainPage.this,R.mipmap.ic_launcher));
+                    }
+                }
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+                    userImage.setImageDrawable(ContextCompat.getDrawable(MainPage.this,R.mipmap.ic_launcher));
+                }
+            });
+        try{
+            navUsername.setText(FirebaseAuth.getInstance().getCurrentUser().getDisplayName());
+        }catch (Exception e){
+            navUsername.setText(getString(R.string.app_name));
+        }
 
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
@@ -54,6 +85,7 @@ public class MainPage extends AppCompatActivity{
         FragmentManager fragmentManager=getSupportFragmentManager();
         fragmentManager.beginTransaction().replace(R.id.frame_layout,new MainFragment(MainPage.this)).commit();
 
+        ActivityCompat.requestPermissions(MainPage.this,new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},1);
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {

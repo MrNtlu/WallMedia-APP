@@ -3,6 +3,7 @@ package com.mrntlu.socialmediaapp;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
@@ -13,6 +14,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -218,14 +220,25 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
                     case R.id.faboptions_favorite:
                         databaseReference.orderByChild("imageURL").equalTo(imageURL).addListenerForSingleValueEvent(new ValueEventListener() {
                             @Override
-                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                            public void onDataChange(@NonNull final DataSnapshot dataSnapshot) {
                                 if (dataSnapshot.exists()){
-                                    for (DataSnapshot child: dataSnapshot.getChildren()) {
-                                        child.getRef().removeValue();
-                                    }
-                                    dataSnapshots.remove(position);
-                                    notifyDataSetChanged();
-                                    Toasty.success(activity,activity.getString(R.string.succ_removed),Toast.LENGTH_SHORT).show();
+                                    new AlertDialog.Builder(activity)
+                                            .setTitle("Are you sure?")
+                                            .setMessage("Do you want to remove it from Favorites?")
+                                            .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                                @Override
+                                                public void onClick(DialogInterface dialogInterface, int i) {
+                                                    for (DataSnapshot child: dataSnapshot.getChildren()) {
+                                                        child.getRef().removeValue();
+                                                    }
+                                                    dataSnapshots.remove(position);
+                                                    notifyDataSetChanged();
+                                                    Toasty.success(activity,activity.getString(R.string.succ_removed),Toast.LENGTH_SHORT).show();
+                                                }
+                                            })
+                                            .setNegativeButton("NO",null)
+                                            .setIcon(android.R.drawable.ic_dialog_alert)
+                                            .show();
                                 }else{
                                     Toasty.error(activity,activity.getString(R.string.alread_removed),Toast.LENGTH_SHORT).show();
                                 }
