@@ -25,6 +25,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.MobileAds;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -43,6 +46,7 @@ public class MainPage extends AppCompatActivity{
     NavigationView navigationView;
     DrawerLayout drawerLayout;
     ActionBarDrawerToggle toggle;
+    AdView adView;
 
     @Override
     public void onBackPressed() {
@@ -56,6 +60,11 @@ public class MainPage extends AppCompatActivity{
         toolbar=(Toolbar) findViewById(R.id.toolbar);
         navigationView=(NavigationView)findViewById(R.id.nav_menu);
         drawerLayout=(DrawerLayout)findViewById(R.id.drawer_layout);
+        adView=(AdView)findViewById(R.id.adView);
+        MobileAds.initialize(this,"ca-app-pub-7421130457283934~8128237156");
+        AdRequest adRequest = new AdRequest.Builder().build();
+        adView.loadAd(adRequest);
+
         View headerView=navigationView.getHeaderView(0);
         TextView navUsername=(TextView)headerView.findViewById(R.id.username_Text);
         final ImageView userImage=(ImageView)headerView.findViewById(R.id.user_image);
