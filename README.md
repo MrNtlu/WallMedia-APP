@@ -1,6 +1,5 @@
 # WallMedia-APP
-![ic_launcher v3 1](https://user-images.githubusercontent.com/25686023/45587615-bc9fba80-b910-11e8-9ea7-2bd78a0ead73.png)
-<p align="center">
+![ic_launcher v3 1](https://user-images.githubusercontent.com/25686023/45587615-bc9fba80-b910-11e8-9ea7-2bd78a0ead73.png)<p align="center">
   <a href="https://play.google.com/store/apps/details?id=com.mrntlu.socialmediaapp"><img  src="https://play.google.com/intl/en_us/badges/images/badge_new.png"/></a>
 </p>
 
