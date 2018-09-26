@@ -30,7 +30,7 @@ import java.util.ArrayList;
 import es.dmoral.toasty.Toasty;
 
 public class SearchFragment extends Fragment {
-    private final String API_TOKEN="481cfa6f70112be63d18faaf10a597dd";
+    private final String API_TOKEN="<API TOKEN>";
     private RequestQueue mQueue;
 
     View v;
