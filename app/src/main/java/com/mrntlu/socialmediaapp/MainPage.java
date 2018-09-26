@@ -59,7 +59,7 @@ public class MainPage extends AppCompatActivity{
         navigationView=(NavigationView)findViewById(R.id.nav_menu);
         drawerLayout=(DrawerLayout)findViewById(R.id.drawer_layout);
         adView=(AdView)findViewById(R.id.adView);
-        MobileAds.initialize(this,"ca-app-pub-7421130457283934~8128237156");
+        MobileAds.initialize(this,"<AD KEY>");
         AdRequest adRequest = new AdRequest.Builder().build();
         adView.loadAd(adRequest);
 
