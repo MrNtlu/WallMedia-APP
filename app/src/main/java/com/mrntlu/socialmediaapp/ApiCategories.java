@@ -28,9 +28,9 @@ import java.util.ArrayList;
 
 public class ApiCategories extends Fragment {
 
-    //TODO SEARCH BY IMAGE https://wall.alphacoders.com/api2.0/get.php?auth=481cfa6f70112be63d18faaf10a597dd&method=search&term=boku+no+hero
+    //TODO SEARCH BY IMAGE https://wall.alphacoders.com/api2.0/get.php?auth=<API TOKEN>&method=search&term=boku+no+hero
     //todo https://wall.alphacoders.com/api.php#collapse_category_count
-    //todo https://wall.alphacoders.com/api2.0/get.php?auth=481cfa6f70112be63d18faaf10a597dd&method=category_list
+    //todo https://wall.alphacoders.com/api2.0/get.php?auth=<API TOKEN>&method=category_list
     //TODO https://android-arsenal.com/details/1/2850
 
     View v;
@@ -42,7 +42,7 @@ public class ApiCategories extends Fragment {
     int page;
 
     private RequestQueue mQueue;
-    private final String API_TOKEN="481cfa6f70112be63d18faaf10a597dd";
+    private final String API_TOKEN="<API TOKEN>";
 
     ArrayList<Uri> thumbLinks=new ArrayList<Uri>();
     ArrayList<Uri> imageLinks=new ArrayList<Uri>();
