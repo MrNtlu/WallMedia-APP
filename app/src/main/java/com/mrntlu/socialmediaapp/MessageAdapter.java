@@ -73,9 +73,9 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
 
     /*TODO
     https://wall.alphacoders.com/api.php#collapse_collection
-    https://wall.alphacoders.com/api2.0/get.php?auth=481cfa6f70112be63d18faaf10a597dd&method=search&term=boku+no+hero
-    https://wall.alphacoders.com/api2.0/get.php?auth=481cfa6f70112be63d18faaf10a597dd&method=category_list
-    https://wall.alphacoders.com/api2.0/get.php?auth=481cfa6f70112be63d18faaf10a597dd&method=category&id=3&page=1&sort=rating
+    https://wall.alphacoders.com/api2.0/get.php?auth=<API TOKEN>&method=search&term=boku+no+hero
+    https://wall.alphacoders.com/api2.0/get.php?auth=<API TOKEN>&method=category_list
+    https://wall.alphacoders.com/api2.0/get.php?auth=<API TOKEN>&method=category&id=3&page=1&sort=rating
     https://github.com/bluelinelabs/LoganSquare
     https://android-arsenal.com/details/1/1550
     https://github.com/google/gson
